@@ -13,27 +13,27 @@ from conf.configuration_reader import conf
 
 
 class Address(ndb.Model):
-    via = ndb.StringProperty(required=True)
-    civico = ndb.IntegerProperty(required=True)
-    citta = ndb.StringProperty(required=True)
-    provincia = ndb.StringProperty(required=True,
-                                   choices=['AG', 'AL', 'AN', 'AO', 'AQ', 'AR', 'AP', 'AT', 'AV', 'BA', 'BT', 'BL',
-                                            'BN', 'BG', 'BI', 'BO', 'BZ', 'BS', 'BR', 'CA', 'CL', 'CB', 'CE', 'CT',
-                                            'CZ', 'CH', 'CO', 'CS', 'CR', 'KR', 'CN', 'EN', 'FM', 'FE', 'FI', 'FG',
-                                            'FC', 'FR', 'GE', 'GO', 'GR', 'IM', 'IS', 'SP', 'LT', 'LE', 'LC', 'LI',
-                                            'LO', 'LU', 'MC', 'MN', 'MS', 'MT', 'ME', 'MI', 'MO', 'MB', 'NA', 'NO',
-                                            'NU', 'OR', 'PD', 'PA', 'PR', 'PV', 'PG', 'PU', 'PE', 'PC', 'PI', 'PT',
-                                            'PN', 'PZ', 'PO', 'RG', 'RA', 'RC', 'RE', 'RI', 'RN', 'RM', 'RO', 'SA',
-                                            'SS', 'SV', 'SI', 'SR', 'SO', 'TA', 'TE', 'TR', 'TO', 'TP', 'TN', 'TV',
-                                            'TS', 'UD', 'VA', 'VE', 'VB', 'VC', 'VR', 'VV', 'VI', 'VT'])
-    regione = ndb.StringProperty(required=True,
-                                 choices=['Abruzzo', 'Basilicata', 'Calabria', 'Campania', 'Emilia-Romagna',
-                                          'Friuli-Venezia Giulia', 'Lazio', 'Liguria', 'Lombardia', 'Marche', 'Molise',
-                                          'Piemonte', 'Puglia', 'Sardegna', 'Sicilia', 'Toscana', 'Trentino-Alto Adige',
-                                          'Umbria', 'Valle d\'Aosta', 'Veneto'])
+    street = ndb.StringProperty(required=True)
+    number = ndb.IntegerProperty(required=True)
+    city = ndb.StringProperty(required=True)
+    province = ndb.StringProperty(required=True,
+                                  choices=['AG', 'AL', 'AN', 'AO', 'AQ', 'AR', 'AP', 'AT', 'AV', 'BA', 'BT', 'BL',
+                                           'BN', 'BG', 'BI', 'BO', 'BZ', 'BS', 'BR', 'CA', 'CL', 'CB', 'CE', 'CT',
+                                           'CZ', 'CH', 'CO', 'CS', 'CR', 'KR', 'CN', 'EN', 'FM', 'FE', 'FI', 'FG',
+                                           'FC', 'FR', 'GE', 'GO', 'GR', 'IM', 'IS', 'SP', 'LT', 'LE', 'LC', 'LI',
+                                           'LO', 'LU', 'MC', 'MN', 'MS', 'MT', 'ME', 'MI', 'MO', 'MB', 'NA', 'NO',
+                                           'NU', 'OR', 'PD', 'PA', 'PR', 'PV', 'PG', 'PU', 'PE', 'PC', 'PI', 'PT',
+                                           'PN', 'PZ', 'PO', 'RG', 'RA', 'RC', 'RE', 'RI', 'RN', 'RM', 'RO', 'SA',
+                                           'SS', 'SV', 'SI', 'SR', 'SO', 'TA', 'TE', 'TR', 'TO', 'TP', 'TN', 'TV',
+                                           'TS', 'UD', 'VA', 'VE', 'VB', 'VC', 'VR', 'VV', 'VI', 'VT'])
+    region = ndb.StringProperty(required=True,
+                                choices=['Abruzzo', 'Basilicata', 'Calabria', 'Campania', 'Emilia-Romagna',
+                                         'Friuli-Venezia Giulia', 'Lazio', 'Liguria', 'Lombardia', 'Marche', 'Molise',
+                                         'Piemonte', 'Puglia', 'Sardegna', 'Sicilia', 'Toscana', 'Trentino-Alto Adige',
+                                         'Umbria', 'Valle d\'Aosta', 'Veneto'])
     latlng = ndb.GeoPtProperty(required=True)
-    cap = ndb.IntegerProperty(required=True)
-    nazione = ndb.StringProperty(required=True, default='Italy')
+    zip_code = ndb.IntegerProperty(required=True)
+    nation = ndb.StringProperty(required=True, default='Italy')
 
     def geocode(self, **geo_args):
         """
@@ -43,8 +43,8 @@ class Address(ndb.Model):
         """
 
         # Costruisco l'indirizzo in base alle informazioni ricevute
-        address = self.via + " " + str(self.civico) + ", " + str(self.cap) + " " + str(self.citta) + " " + str(
-            self.provincia) + ", " + str(self.regione) + ", " + str(self.nazione)
+        address = self.street + " " + str(self.number) + ", " + str(self.zip_code) + " " + str(self.city) + " " + str(
+            self.province) + ", " + str(self.region) + ", " + str(self.nation)
 
         geo_args.update({
             'address': address

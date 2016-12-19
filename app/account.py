@@ -21,12 +21,12 @@ class UserAccount(ThermostHouseRequestHandler):
 
         usr_data.update({'name': authenticated_user.username})
         if authenticated_user.address:
-            usr_data.update({'citta': authenticated_user.address.citta})
+            usr_data.update({'city': authenticated_user.address.city})
         else:
-            usr_data.update({'citta': None})
+            usr_data.update({'city': None})
 
         if authenticated_user.image:
-            encoded_image = base64.b64encode(authenticated_user.immagine)
+            encoded_image = base64.b64encode(authenticated_user.image)
             src = "data:image/gif;base64," + encoded_image
             usr_data.update({'image': src})
         else:
@@ -60,12 +60,12 @@ class UserAccount(ThermostHouseRequestHandler):
 
                 usr_data.update({'name': data.username})
                 if data.address:
-                    usr_data.update({'citta': data.address.citta})
+                    usr_data.update({'city': data.address.city})
                 else:
-                    usr_data.update({'citta': None})
+                    usr_data.update({'city': None})
 
                 if data.image:
-                    encoded_image = base64.b64encode(data.immagine)
+                    encoded_image = base64.b64encode(data.image)
                     src = "data:image/gif;base64," + encoded_image
                     usr_data.update({'image': src})
                 else:
@@ -112,14 +112,15 @@ class UserAccount(ThermostHouseRequestHandler):
 
             if reconstructed_key != autenticated_user_key:
                 # Eseguo la ricerca
-                qry = ndb.gql('SELECT * FROM Utente where __key__ IN :1', [reconstructed_key])
+                qry = ndb.gql('SELECT * FROM Users where __key__ IN :1', [reconstructed_key])
                 list = self.set_usr_data(qry, autenticated_user_key)  # Carico correttamente i valori nella list
                 autenticated_user = None
 
         # js_user_data = json.dumps(list)
 
         # Carico la pagina con i parametri degli utenti
-        self.render('user_profile.html', autenticated_user=self.set_auth_usr_data(autenticated_user), usr_data=list)
+        self.render('account/user_profile.html', autenticated_user=self.set_auth_usr_data(autenticated_user),
+                    usr_data=list)
 
 
 class PostRecipe(ThermostHouseRequestHandler):

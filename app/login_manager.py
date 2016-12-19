@@ -109,21 +109,20 @@ class FacebookLogin(ThermostHouseRequestHandler):
                     html_image = None
                     error_msg = "Exception '{ex}', {ex_type} "
                     logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
+            from models.users import Users
 
-            from models.users import Users as InternalUser
-
-            our_user = InternalUser.check_if_exists(email)
+            our_user = Users.check_if_exists(email)
             if not our_user:
                 # Genero una password casuale per poter creare l'utente (in futuro l'utente potrà accedere al
                 # servizio usando il login intero, per farlo dovrà semplicemente modificare la password)
-                dict = InternalUser.add_new_user(name, email, '123password321', True, False, False, id)
-                InternalUser.add_image(html_image, dict['user_id'])
-                InternalUser.automatic_confirm_email(dict['user_id'])
+                dict = Users.add_new_user(name, email, '123password321', True, False, False, id)
+                Users.add_image(html_image, dict['user_id'])
+                Users.automatic_confirm_email(dict['user_id'])
                 try:
                     if email:
                         self.send_welcome_email(to=email, user_id=dict['user_id'],
                                                 confirmation_code=dict['confirmation_code'],
-                                                name=name, )
+                                                name=name)
                 except Exception as ex:
                     error_msg = "Exception: problems with email, {ex_type} "
                     logging.error(error_msg.format(ex_type=type(ex)))
