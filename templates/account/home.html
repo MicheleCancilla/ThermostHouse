@@ -1,0 +1,42 @@
+{% extends "main.html" %}
+
+{% block title %}Hello, ...!{% endblock %}
+
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <h2>Your recipes</h2>
+        </div>
+
+        <div class="row">
+            <a href="account/new-recipe">
+                <div class="col-lg-3 new-recipe">
+                    <div class="post-new-recipe">
+                        <i class="fa fa-plus fa-5x"></i>
+                        <h3>Post new recipe</h3>
+                    </div>
+                </div>
+            </a>
+
+            {% for recipe in recipes %}
+
+            <a href="/recipe/{{ recipe.doc_id }}">
+                <div class="col-lg-3">
+                    <div class="img-container">
+                        <img src="{{ recipe.photo_url[0].value }}"> <!-- get the first element of the list "photo_url" -->
+                    </div>
+                    <div class="account-snippet">
+                        <p>{{ recipe.title[0].value }}</p>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+        </div>
+
+
+
+    </div>
+
+{% endblock %}

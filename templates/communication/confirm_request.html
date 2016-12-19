@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+
+{% block title %}Conferma Richiesta{% endblock %}
+
+{% block maincontent %}
+
+ <!-- File per la conferma dell'avvenuta richiesta di prenotazione -->
+
+ <!-- Caricamento dei fogli di stile CSS -->
+  <link href="CSS/error.css" rel="stylesheet" type="text/css" />
+  <link href="CSS/set_pages.css" rel="stylesheet" type="text/css" />
+
+<div id="main-content">
+<div id="setError">
+
+    <h1>La tua richiesta è stata inoltrata correttamente </h1>
+
+    <div id="setButton">
+        <button type="button" onclick="location.href='home';"> Home </button>
+    </div>
+
+</div>
+</div><!-- main-content -->
+
+{% endblock %}

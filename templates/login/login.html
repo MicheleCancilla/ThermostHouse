@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+
+{% block title %}Log into Xenov Search{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Login</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <form class="form-horizontal" method="post" action="/login">
+                <div class="form-group">
+                    <label for="email" class="col-lg-2 col-lg-offset-1 control-label">Email</label>
+                    <div class="col-lg-4">
+                        <input type="email" class="form-control" name="email" placeholder="Email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="col-lg-2 col-lg-offset-1 control-label">Password</label>
+                    <div class="col-lg-4">
+                        <input type="password" class="form-control" name="password" placeholder="Password">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-10">
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row col-lg-offset-2 col-lg-10">
+            <button class="btn btn-facebook" onclick="fb_login()" id="logInFacebook"><i
+                    class="fa fa-facebook-official"></i> | Connect with Facebook
+            </button>
+            <a href="/google_login">
+                <button class="btn btn-google-plus" id="logInGoogle"><i class="fa fa-google"></i>
+                    | Connect with Google
+                </button>
+            </a>
+
+            <!--<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="true"
+                 data-auto-logout-link="false"></div>-->
+
+        </div>
+    </div>
+{% endblock %}

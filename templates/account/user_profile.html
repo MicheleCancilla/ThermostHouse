@@ -1,0 +1,193 @@
+{% extends "index.html" %}
+
+{% block title %}Account{% endblock %}
+
+{% block maincontent %}
+
+<!-- File per la visualizzaione dei profili utente -->
+
+<!-- Caricamento dei fogli di stile CSS -->
+<link href="CSS/user_plant.css" rel="stylesheet" type="text/css" />
+<link href="CSS/set_pages.css" rel="stylesheet" type="text/css" />
+
+<div id="main-content">
+<div id="setUserProfile">
+
+<!-- Sezione (form) per la ricerca Utenti -->
+<form id="ricercaUtente"  action="homebrewer" method="post">
+
+    <!-- N.B i "value" degli attributi "option" sono correlati ai campi delle entità Utente, Indirizzo, Impianto -->
+    <select name="tipoRicerca" id="tipoRicerca" required>
+    <option value ='tutti' selected>Ricerca per</option>
+    <option value='username'>Nome</option>
+    <option value='citta'>Citta</option>
+    </select>
+
+    <input id="valoreCercato" name="valoreCercato" type="text" placeholder="Cosa cerchi?" autofocus>
+
+    <!-- N.B i "value" degli attributi "option" sono correlati ai campi delle entità Utente, Indirizzo, Impianto -->
+    <select name="tipoOrdinamento" id="tipoOrdinamento" required  style="display: none">
+    <option value='nessuno' selected>Ordina per</option>
+    <option value='username'>Nome</option>
+    <option value='citta'>Citta</option>
+    </select>
+
+<button id="ButtonRicerca" type="submit"></button>
+
+</form>
+<!-- Visualizzo tutti i profili richiesti (N.B il numero e il tipo di profili da visualizzare dipende dal percorso
+     tramite cui viene effettuata la richiesta. Questa discriminazione viene fatto dell'HomebrewHandler lato server) -->
+{% if autenticated_user %}
+    <!-- C'è un utente autenticato, lo visualizzo per primo -->
+    <div id="ProfilePage">
+        <div id="LeftCol">
+            <div id="Photo">
+                {% if autenticated_user['image'] != None %}
+                    <img id="PhotoProfile" src={{ autenticated_user['image'] }}>
+                {% else %}
+                    <div id="PhotoProfile"></div>
+                {% endif %}
+            </div>
+            <div id="ProfileOptions">
+            <!-- #ProfileOptions -->
+            </div>
+        </div>
+
+        <div id="Info">
+            <p>
+                <strong>Nome:</strong>
+                <span>
+                {% if autenticated_user['name'] == None %}
+                     -
+                {% else %}
+                     {{ autenticated_user['name'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <p>
+                <strong>Citta:</strong>
+                <span>
+                {% if autenticated_user['citta'] == None %}
+                     -
+                {% else %}
+                     {{ autenticated_user['citta'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <p>
+                <strong>E-mail:</strong>
+                <span>
+                {% if autenticated_user['mail'] == None %}
+                     -
+                {% else %}
+                     {{ autenticated_user['mail'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <p>
+                <strong>Impianto:</strong>
+                <span>
+                {% if autenticated_user['plant'] == None %}
+                     -
+                {% else %}
+                     {{ autenticated_user['plant'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <div id="Buttons">
+            <a href="/modifica_profilo"><button id="ButtonMP" type="button">Modifica profilo</button></a>
+            {% if autenticated_user['plant'] != None %}
+                <a href="/impianti?utente={{ autenticated_user['urlsafeKey'] }}"><button id="ButtonVI" type="button" >Vedi impianto</button></a>
+            {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <div id="endBlock">
+    </div>
+{% endif %}
+
+
+{% if usr_data %}
+    <!-- Ci sono utenti generici da visualizzare-->
+    {% for data in usr_data %}
+    <div id="ProfilePage">
+        <div id="LeftCol">
+            <div id="Photo">
+                {% if data['image'] != None %}
+                    <img id="PhotoProfile" src={{ data['image'] }}>
+                {% else %}
+                    <div id="PhotoProfile"></div>
+                {% endif %}
+            </div>
+            <div id="ProfileOptions">
+            <!-- #ProfileOptions -->
+            </div>
+        </div>
+
+        <div id="Info">
+            <p>
+                <strong>Nome:</strong>
+                <span>
+                {% if data['name'] == None %}
+                     -
+                {% else %}
+                     {{ data['name'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <p>
+                <strong>Citta:</strong>
+                <span>
+                {% if data['citta'] == None %}
+                     -
+                {% else %}
+                     {{ data['citta'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <p>
+                <strong>E-mail:</strong>
+                <span>
+                {% if data['mail'] == None %}
+                     -
+                {% else %}
+                     {{ data['mail'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <p>
+                <strong>Impianto:</strong>
+                <span>
+                {% if data['plant'] == None %}
+                     -
+                {% else %}
+                     {{ data['plant'] }}
+                {% endif %}
+                 </span>
+            </p>
+            <div id="Buttons">
+            {% if data['plant'] != None %}
+                <a href="/impianti?utente={{ data['urlsafeKey'] }}"><button id="ButtonVI" type="button" > Vedi impianto</button></a>
+            {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <div id="endBlock">
+    </div>
+
+    {% endfor %}
+{% elif not autenticated_user%}
+    <!-- LA RICERCA NON HA PRODOTTO RISULTATI, VISULIZZO UN MESSAGGIO-->
+    <div id="noResult">
+        <h1>La ricerca non ha prodotto alcun risultato, <br/> controlla i parametri inseriti e prova di nuovo.</h1>
+    </div>
+{% endif %}
+
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+
+    <!-- File per la comunicazione di errori generici -->
+
+
+    <div id="main-content">
+        <div id="setError">
+
+            <h1>An error occured, we will try to fix it as soon as possible.</h1>
+            <h2>Provide us more information sending us an e-mail: {{ mail }}. </h2>
+
+            <div id="setButton">
+                <button type="button" onclick="location.href='/';"> Home</button>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

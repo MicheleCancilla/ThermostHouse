@@ -1,0 +1,46 @@
+<script>
+    $('#signIn').click(function(){
+        var email =  $('#email').val();
+        var password =  $('#password').val();
+
+        var login_button= $('#login-button-message');
+        login_button.html('Login...');
+
+        var login_button_icon= $('#login-button-icon');
+        login_button_icon.addClass('fa fa-spinner');
+
+        $.ajax({
+            type: "POST",
+            url: "/login",
+            data: {
+                email: email,
+                password: password
+            },
+
+            success: function(response){
+                document.location.href = '/home';
+            },
+
+
+            error: function(response){
+                var ajax_errors =  $('#ajax-errors-login');
+                var title= response.responseJSON['title'];
+                var message= response.responseJSON['message'];
+
+                ajax_errors.css('display', 'block');
+                ajax_errors.find('strong').html(title);
+                ajax_errors.find('span').html(message);
+                login_button_icon.removeClass('fa fa-spinner');
+            },
+
+            complete: function(){
+                login_button.html('Login');
+                login_button_icon.removeClass('fa fa-spinner')
+
+            }
+
+        })
+
+    })
+</script>
+

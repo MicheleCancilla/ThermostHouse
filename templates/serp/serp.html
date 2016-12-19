@@ -1,0 +1,41 @@
+{% extends "main.html" %}
+
+{% block title %}Recipes for {{ query }}{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <h2>Recipes for {{ query }}</h2>
+        </div>
+
+        {% for recipe in recipes %}
+
+            <div class="snpt col-lg-3">
+                <div class="snpt-img">
+                    <a href="/recipe/{{ recipe.doc_id }}" class="img-container">
+                        <img src="{{ recipe.photo_url[0].value }}" style="width: 100%; height: 100%;">
+                    </a>
+                </div>
+
+                <div class="snpt-title">
+                    <h2>
+                        <a href="/recipe/{{ recipe.doc_id }}">
+                            {{ recipe.title[0].value }}
+                        </a>
+                    </h2>
+
+                </div>
+
+                <div class="snpt-ingredients">
+
+                    <a href="/recipe/{{ recipe.doc_id }}">
+                        {{ recipe.expressions[0].value }}
+                    </a>
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

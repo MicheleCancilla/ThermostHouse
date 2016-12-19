@@ -1,0 +1,24 @@
+{% extends "index.html" %}
+
+{% block title %}Errore Calendario{% endblock %}
+
+{% block maincontent %}
+
+ <!-- file per la comunucazione di errori in fase di inizializzazione del servizio di Google relativo al calendario -->
+
+ <!-- Caricamento dei fogli di stile CSS -->
+  <link href="CSS/error.css" rel="stylesheet" type="text/css" />
+  <link href="CSS/set_pages.css" rel="stylesheet" type="text/css" />
+
+<div id="main-content">
+<div id="setError">
+
+<h1>C'è stato un errore nell'inizializzare il calendar service</h1>
+<h2>Controlla la connessione e riprova più tardi</h2>
+
+<button type="button" onclick="location.href='home';">Home </button>
+
+</div>
+</div><!-- main-content -->
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+
+{% block title %}Conferma Email{% endblock %}
+
+{% block maincontent %}
+
+  <!-- File per la comunicazione dello stato della mail -->
+
+   <!-- Caricamento dei fogli di stile CSS -->
+  <link href="/CSS/registration_confirm.css" rel="stylesheet" type="text/css" />
+  <link href="/CSS/set_pages.css" rel="stylesheet" type="text/css" />
+
+
+<div id="main-content">
+<div id="statoConfirm">
+    <h1>Stato conferma email:</h1>
+    {% if email_confirmed  %}
+    <i class="fa fa-thumbs-up fa-5x"></i>
+    {% else %}
+    <i class="fa fa-thumbs-down fa-5x"></i>
+    {% endif %}
+    <br />
+    <a href="/home"> <button type="button"> Home </button></a>
+</div>
+</div><!-- main-content -->
+
+{% endblock %}

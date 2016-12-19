@@ -1,0 +1,51 @@
+{% extends "main.html" %}
+
+
+{% block title %}{{ recipe.title }}{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="col-lg-5">
+            <div class="row">
+                <h1>{{ recipe.title }}</h1>
+            </div>
+
+            <ul class="square">
+                {% if recipe.cuisine %}
+                    <li><h4>Cuisine: {{ recipe.cuisine }}</h4></li>
+                {% endif %}
+                {% if recipe.difficulty %}
+                    <li><h4>Difficulty: {{ recipe.difficulty }}</h4></li>
+                {% endif %}
+                <li><h4>Prep Time: {{ recipe.prep_time }}</h4></li>
+                <li><h4>Cook Time: {{ recipe.cook_time }}</h4></li>
+            </ul>
+        </div>
+        <div class="col-lg-7">
+            <img src="{{ recipe.photo_url }}=s400" style="width: auto; height: auto;">
+        </div>
+
+        <div class="col-lg-5">
+            <h4>Ingredients:</h4>
+            <ul class="square">
+                {% for ingredient in recipe.ingredients %}
+                    <li>
+                        {{ ingredient['amount'] if ingredient['amount'] != None }} {{ ingredient['unit'] if ingredient['unit'] != None }} {{ ingredient['ingredient'] if ingredient['ingredient']!= None }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-lg-7">
+            <h4>Directions to prepare {{ recipe.title }}:</h4>
+            <ol>
+                {% for direction in recipe.directions %}
+                    <li>
+                        {{ direction }}
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+
+{% block title %}Errore{% endblock %}
+
+{% block maincontent %}
+
+ <!-- file per la comunicazione di errori in fase di invio di mail -->
+
+ <!-- Caricamento dei fogli di stile CSS -->
+  <link href="CSS/error.css" rel="stylesheet" type="text/css" />
+  <link href="CSS/set_pages.css" rel="stylesheet" type="text/css" />
+
+<div id="main-content">
+<div id="setError">
+
+    <h1>Per problemi tecnici non siamo riusciti ad inviare la mail di richiesta </h1>
+    <h2>Ti preghiamo di riprovare più tardi </h2>
+
+    <div id="setButton">
+        <button type="button" onclick="location.href='home';"> Home </button>
+    </div>
+
+</div>
+</div><!-- main-content -->
+
+{% endblock %}
