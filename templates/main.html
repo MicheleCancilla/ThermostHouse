@@ -12,10 +12,6 @@
 </head>
 <body>
 
-{% include "commons/navbar.html" %}
-{% include "login/login_with_facebook.js.html" %}
-
-
 {% block content %}
 
 {% endblock %}
@@ -25,6 +21,8 @@
 <script src="/static/js/bootstrap.min.js"></script>
 
 {% include "register/register.js.html" %}
+{% include "commons/navbar.html" %}
+{% include "login/login_with_facebook.js.html" %}
 
 </body>
 </html>

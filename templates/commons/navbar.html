@@ -14,37 +14,88 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse">
-            <form class="navbar-form navbar-left" action="/search">
-                <div class="form-group input-group">
-                    <input type="text" class="form-control" name="q" placeholder="Search recipes">
-                    <span class="input-group-btn">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-search"></i>
-                        </button>
-                        </span>
-                </div>
-            </form>
+            {#            <form class="navbar-form navbar-left" action="/search">#}
+            {#                <div class="form-group input-group">#}
+            {#                    <input type="text" class="form-control" name="q" placeholder="Search recipes">#}
+            {#                    <span class="input-group-btn">#}
+            {#                        <button type="submit" class="btn btn-primary">#}
+            {#                            <i class="fa fa-search"></i>#}
+            {#                        </button>#}
+            {#                        </span>#}
+            {#                </div>#}
+            {#            </form>#}
+            <ul class="nav navbar-nav">
 
+                <li><a href="">Termostati</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+
+
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user %}
-                    &nbsp;<i class="fa fa-user"></i><a href="/account?user={{ user.key.urlsafe() }}">
-                    {% if user.username|length <= 15 %}
-                        {{ user.username }}
-                    {% else %}
-                        {{ user.username[:15] }}
-                    {% endif %}</a>
+                    <span class="glyphicon glyphicon-user"></span>
+                    <a href="/account?user={{ user.key.urlsafe() }}">
+                        <strong>
+                            {% if user.username|length <= 20 %}
+                                {{ user.username }}
+                            {% else %}
+                                {{ user.username[:20] }}
+                            {% endif %}
+                        </strong>
+                    </a>
+                    <br/>
+                    <span class="glyphicon glyphicon-log-out"></span>
+                    <strong><a href="/logout">Sign Out</a></strong>
+                    <br/>
                 {% else %}
-                    <li><a href="/login"><i class="fa fa-key"></i>Login</a></li>
-                    <li><a href="/register"><i class="fa fa-user-circle"></i>Register</a></li>
-                {% endif %}
-                {#                <?php if(isLogged()): ?>#}
-                {#                <li><a href="profile.php">Profile</a></li>#}
-                {#                <li><a href="logout.php">Logout</a></li>#}
-                {#                <?php else: ?>#}
-                {#                <li><a href="/login"><i class="fa fa-key"></i>Login</a></li>#}
-                {#                <li><a href="/register"><i class="fa fa-user-circle"></i>Register</a></li>#}
-                {#                <?php endif; ?>#}
+                    <li><a href="register">Sign Up</a></li>
+                    <li class="dropdown">
+                    <a href="login" class="dropdown-toggle" data-toggle="dropdown">Sign in <b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu" style="padding: 15px;min-width: 250px;">
+                    <li>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="form" role="form" method="post" action="/login" accept-charset="UTF-8"
+                                      id="login-nav">
+                                    <div class="form-group">
+                                        <label class="sr-only">Email address</label>
+                                        <input type="email" name="email" class="form-control" id="email"
+                                               placeholder="Email address" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="sr-only">Password</label>
+                                        <input type="password" name="password" class="form-control" id="password"
+                                               placeholder="Password" required>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox"> Remember me
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success btn-block">Sign in</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
 
+                    <button class="btn btn-facebook btn-block" onclick="fb_login()" id="logInFacebook"><i
+                            class="fa fa-facebook-official"></i> | Connect with Facebook
+                    </button>
+
+                    <button class="btn btn-google-plus btn-block" id="logInGoogle"
+                            onclick="window.location.href='/google_login'"><i class="fa fa-google"></i>
+                        | Connect with Google
+                    </button>
+                {% endif %}
+                </li>
+                </ul>
+                </li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->

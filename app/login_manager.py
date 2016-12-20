@@ -75,7 +75,7 @@ class GoogleLogin(ThermostHouseRequestHandler):
                 else:
                     self.send_cookie(name='User', value=our_user.key.id())
 
-                return self.redirect('/')
+                return self.redirect('/home')
             else:
                 return self.redirect(users.create_login_url(self.request.uri))
 
@@ -130,7 +130,7 @@ class FacebookLogin(ThermostHouseRequestHandler):
                 self.send_cookie(name='User', value=dict['user_id'])
             else:
                 self.send_cookie(name='User', value=our_user.key.id())
-            return self.redirect('/account')
+            return self.redirect('/home')
 
         except Exception as ex:
             error_msg = "Exception '{ex}', {ex_type} "
@@ -151,7 +151,7 @@ class LogOut(ThermostHouseRequestHandler):
                 return self.redirect(users.create_logout_url('/'))
 
             # Altrimenti ridireziono alla home
-            return self.redirect('/account')
+            return self.redirect('/')
 
         except Exception as ex:
             error_msg = "Exception '{ex}', {ex_type} "

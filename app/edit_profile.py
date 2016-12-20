@@ -28,7 +28,7 @@ class EditProfile(ThermostHouseRequestHandler):
         Handler per la gestione della modifica delle informazioni del profilo utente
     """
 
-    @ThermostHouseRequestHandler.login_required_user
+    @ThermostHouseRequestHandler.login_required
     def get(self):
         # I dati dell'utente per il preload del form vengono utilizzati anche all'interno di script javascript, per
         # tale motivo è necessario gestirli (anche) in formato json
@@ -37,7 +37,7 @@ class EditProfile(ThermostHouseRequestHandler):
         plant_image = None
 
         if usr.image:
-            encoded_image = base64.b64encode(usr.immagine)
+            encoded_image = base64.b64encode(usr.image)
             usr_image = "data:image/gif;base64," + encoded_image
 
         # if usr.impianto:
@@ -57,9 +57,9 @@ class EditProfile(ThermostHouseRequestHandler):
         js_data = json.dumps(supp_dict)
 
         # TODO create change_profile.html
-        self.render_json('change_profile.html', js_data, usr_image=usr_image, plant_image=plant_image)
+        self.render_json('account/edit_profile.html', js_data, usr_image=usr_image, plant_image=plant_image)
 
-    @ThermostHouseRequestHandler.login_required_user
+    @ThermostHouseRequestHandler.login_required
     def post(self):
         user = self.check_user_logged_in
 
@@ -93,34 +93,34 @@ class EditProfile(ThermostHouseRequestHandler):
             # La localizzazione è andata a buon fine, proseguo
 
             # Acquisizione dei dati dell'impianto
-            imp = Impianto()
-            imp.alimentazione = self.request.get('alimtype')
+            # imp = Impianto()
+            # imp.alimentazione = self.request.get('alimtype')
+            # try:
+            #     imp.capacita = int(self.request.get('capacita'))
+            # except ValueError:
+            #     # L'eventualità che il parametro inserito non sia un numero è gestita lato client dal browser
+            #     pass
+            #
+            # imp.tipo = self.request.get('tipo')
+            # imp.descrizione = self.request.get('descrizione')
+            #
+            # # Il noleggio è a True di default
+            # if self.request.get('nolotype') == 'False':
+            #     imp.noleggio = False
+
+            # if self.request.get('file'):
+            #     image = self.request.get('file')
+            #     imp.immagine = images.resize(image, 200, 200)
+            # elif user.impianto:
+            #     # Se era disponibile ricarico la vecchia immagine
+            #     imp.immagine = user.impianto.immagine
+
             try:
-                imp.capacita = int(self.request.get('capacita'))
-            except ValueError:
-                # L'eventualità che il parametro inserito non sia un numero è gestita lato client dal browser
-                pass
-
-            imp.tipo = self.request.get('tipo')
-            imp.descrizione = self.request.get('descrizione')
-
-            # Il noleggio è a True di default
-            if self.request.get('nolotype') == 'False':
-                imp.noleggio = False
-
-            if self.request.get('file'):
-                image = self.request.get('file')
-                imp.immagine = images.resize(image, 200, 200)
-            elif user.impianto:
-                # Se era disponibile ricarico la vecchia immagine
-                imp.immagine = user.impianto.immagine
-
-            try:
-                user.indirizzo = ind
-                user.impianto = imp
+                user.address = ind
+                # user.impianto = imp
                 user.put()
                 # Al termine della modifica rimando alla pagina dell'utente
-                self.redirect('/homebrewer?utente=' + user.key.urlsafe())
+                self.redirect('/account?utente=' + user.key.urlsafe())
             except Exception as ex:
                 error_msg = "Exception '{ex}', {ex_type} "
                 logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
@@ -136,11 +136,11 @@ class ChangePassword(ThermostHouseRequestHandler):
 
     """
 
-    @ThermostHouseRequestHandler.login_required_user
+    @ThermostHouseRequestHandler.login_required
     def get(self):
-        self.render("change_password.html")
+        self.render("account/change_password.html")
 
-    @ThermostHouseRequestHandler.login_required_user
+    @ThermostHouseRequestHandler.login_required
     def post(self):
         try:
             password = self.request.get("password")
@@ -150,15 +150,14 @@ class ChangePassword(ThermostHouseRequestHandler):
                 salt = b64encode(random_bytes).decode('utf-8')
                 hashed_password = salt + sha256(salt + password).hexdigest()
                 user.password = hashed_password
-                print user.password
                 user.put()
                 tmp_values = {
                     'user_password_changed': True
 
                 }
-                return self.render('change_password.html', **tmp_values)
+                return self.render("account/change_password.html", **tmp_values)
 
-            self.redirect('/modifica_profilo')
+            self.redirect('/edit_profile')
 
         except Exception as ex:
             error_msg = "Exception '{ex}', {ex_type} "

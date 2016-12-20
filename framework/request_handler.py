@@ -16,9 +16,26 @@ class ThermostHouseRequestHandler(RequestHandler):
     )
 
     def render(self, template, **kwargs):
+        #aggiungo l'user nella risposta se questo è loggato
+        user = self.check_user_logged_in
+        kwargs.update({
+            'user': user,
+        })
         jinja_template = self.jinja_env.get_template(template)
         html_from_template = jinja_template.render(kwargs)
+        self.response.out.write(html_from_template)
 
+    def render_json(self, template, json, **kwargs):
+
+        # Metodo per il render di template, dati eventuali parametri come dizionario **kwargs e parametri json
+
+        # Se un utente è autenticato invio i parametri per la personalizzazione della pagina
+        user = self.check_user_logged_in
+        kwargs.update({
+            'user': user,
+        })
+        jinja_template = self.jinja_env.get_template(template)
+        html_from_template = jinja_template.render(kwargs, js_data=json)
         self.response.out.write(html_from_template)
 
     def json_response(self, status_code=200, **kwargs):

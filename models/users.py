@@ -6,6 +6,8 @@ from hashlib import sha256
 from base64 import b64encode
 from os import urandom
 from models.address import Address
+from models.thermostats import Thermostats
+from google.appengine.api import search
 import uuid
 
 
@@ -30,6 +32,9 @@ class Users(ndb.Model):
     image = ndb.BlobProperty()  # Avatar dell'utente
 
     address = ndb.StructuredProperty(Address)
+
+    # un utente può avere piu di un termsotato
+    thermostat = ndb.StructuredProperty(Thermostats, repeated=True)
 
     @classmethod
     def check_if_exists(cls, email):
@@ -93,6 +98,7 @@ class Users(ndb.Model):
             usr.put()
 
     """ Return the ID of the user if exists"""
+
     @classmethod
     def check_password(cls, email, password):
         user = cls.check_if_exists(email)
@@ -122,3 +128,11 @@ class Users(ndb.Model):
     def get_users(cls):
         qry = cls.query()
         return qry
+
+    @classmethod
+    def get_all_thermostats_by_user(cls, user_id):
+        index = search.Index('thermostats')
+        # query
+        query = 'user_id:(%s)' % user_id
+        result = index.search(query)
+        return result.results

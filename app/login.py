@@ -28,6 +28,6 @@ class LoginUser(ThermostHouseRequestHandler):
 
         if user_id:
             self.send_cookie(name='User', value=user_id)
-            self.redirect('/account')
+            self.redirect('/home')
         else:
-            self.redirect('/login')
+            self.redirect('/home')

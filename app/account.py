@@ -40,6 +40,7 @@ class UserAccount(ThermostHouseRequestHandler):
         usr_data.update({'mail': authenticated_user.email})
 
         usr_data.update({'urlsafeKey': authenticated_user.key.urlsafe()})
+        # usr_data.update({'user': authenticated_user.username})
 
         return usr_data
 
@@ -76,6 +77,7 @@ class UserAccount(ThermostHouseRequestHandler):
                 # else:
                 #     usr_data.update({'plant': None})
                 usr_data.update({'mail': data.email})
+                usr_data.update({'user': data.username})
 
                 usr_data.update({'urlsafeKey': data.key.urlsafe()})
 
