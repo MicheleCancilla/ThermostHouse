@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="70d7d58e-0ef1-44fb-8524-096e7342c3fb" name="Default" comment="Added thermostat object, a lot of bugfixes">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ThermostHouse.iml" afterPath="$PROJECT_DIR$/.idea/ThermostHouse.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Google_App_Engine_SDK.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Google_App_Engine_SDK.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/edit_profile.py" afterPath="$PROJECT_DIR$/app/edit_profile.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/framework/email_handler.py" afterPath="$PROJECT_DIR$/framework/email_handler.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/httplib2-0.9.2/setup.py" afterPath="$PROJECT_DIR$/lib/httplib2-0.9.2/setup.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/address.py" afterPath="$PROJECT_DIR$/models/address.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/account/change_password.html" afterPath="$PROJECT_DIR$/templates/account/change_password.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/account/edit_profile.html" afterPath="$PROJECT_DIR$/templates/account/edit_profile.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/account/user_profile.html" afterPath="$PROJECT_DIR$/templates/account/user_profile.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/email/welcome_email.html" afterPath="$PROJECT_DIR$/templates/email/welcome_email.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/login/login_controller.js.html" afterPath="$PROJECT_DIR$/templates/login/login_controller.js.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -669,7 +657,14 @@
       <option name="project" value="LOCAL" />
       <updated>1482270351718</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added thermostat object, a lot of bugfixes">
+      <created>1482271354734</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1482271354734</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView">
@@ -718,6 +713,7 @@
     <MESSAGE value="second commit" />
     <MESSAGE value="Added thermostat object, a lot of bugfixes" />
     <option name="LAST_COMMIT_MESSAGE" value="Added thermostat object, a lot of bugfixes" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
