@@ -20,6 +20,7 @@ app = WSGIApplication(
         Route('/logout', handler='app.login_manager.LogOut'),
 
         Route('/thermostat', handler='app.thermostat.ThermostatPage'),
+        Route('/create_thermostat', handler='app.thermostat.CreateThermostat'),
 
         Route('/account', handler='app.account.UserAccount'),
         Route('/account/new-recipe', handler='app.account.PostRecipe'),

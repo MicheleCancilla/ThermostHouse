@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
 
+    <link rel="icon" href="/static/img/thermosthouse_logo.png">
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/static/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="/static/fonts/glyphicons-halflings-regular.eot">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -16,13 +18,13 @@
 
 {% endblock %}
 
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+<script src="/static/js/jquery.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
 
 {% include "register/register.js.html" %}
-{% include "commons/navbar.html" %}
 {% include "login/login_with_facebook.js.html" %}
+{% include "commons/navbar.html" %}
 
 </body>
 </html>

@@ -65,6 +65,7 @@ class ThermostHouseRequestHandler(RequestHandler):
     # essentially is a wrapper, remember the output of the function
     @cached_property
     def check_user_logged_in(self):
+        """Return an istance of user model"""
         if self.request.cookies.get('User'):
             user_id = self.read_cookie('User')
             if user_id:
@@ -84,17 +85,17 @@ class ThermostHouseRequestHandler(RequestHandler):
             if self.check_user_logged_in:
                 return handler(self, *args, **kwargs)
             else:
-                return self.redirect('/login')
+                return self.redirect('/home')
 
         return check_login
 
     def get_auth_user(self):
         # Controllo se c'è un utente autenticato
-        autenticated_user = self.check_user_logged_in
-        if autenticated_user:
-            autenticated_user_key = autenticated_user.key
+        auth_user = self.check_user_logged_in
+        if auth_user:
+            auth_user_key = auth_user.key
         else:
             # Non c'è un utente autenticato
             return None, None
 
-        return autenticated_user, autenticated_user_key
+        return auth_user, auth_user_key

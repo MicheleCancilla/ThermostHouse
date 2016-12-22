@@ -1,6 +1,6 @@
 body {
-    padding-top: 50px;
-    background-color: #e5e5e5;
+    padding-top: 60px;
+    background-color: #ffffff;
 }
 
 .snpt {
@@ -96,7 +96,7 @@ img {
 
 .main-header {
     text-align: center;
-    background: url(/static/img/home.jpg) no-repeat center center fixed;
+    /*background: url(/static/img/home.jpg) no-repeat center center fixed;*/
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -104,8 +104,68 @@ img {
     min-height: 650px;
 }
 
-.home-h1{
+.home-h1 {
     color: #fff;
     font-size: 72px;
     text-shadow: 0 0 5px #222;
+}
+
+/*NAVBAR CSS*/
+
+.navbar-header img {
+    max-height: 100%;
+    width: 30px;
+}
+
+.navbar, .dropdown-menu {
+    background: #d9d9d9;
+    border: none;
+}
+
+.navbar > li > a {
+    color: #337ab7;
+}
+
+/*.navbar-brand a {*/
+/*color: #337ab7;*/
+/*}*/
+
+.nav > li > a /*, .dropdown-menu > li > a:focus, .dropdown-menu > li > a:hover, .dropdown-menu > li > a, .dropdown-menu > li */
+{
+    border-bottom: 3px solid transparent;
+}
+
+.nav > li > a:focus, .nav > li > a:hover, .nav .open > a, .nav .open > a:focus, .nav .open > a:hover /*, .dropdown-menu > li > a:focus, .dropdown-menu > li > a:hover*/
+{
+    border-bottom: 3px solid transparent;
+    background: rgba(154, 154, 154, 0.27);
+}
+
+/*.navbar a, .dropdown-menu > li > a, .dropdown-menu > li > a:focus, .dropdown-menu > li > a:hover, .navbar-toggle {*/
+/*color: #fff;*/
+/*}*/
+
+.dropdown-menu {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.nav li:hover, .nav li.active {
+    border-bottom: #337ab7 3px solid;
+}
+
+.navbar-toggle .icon-bar {
+    color: #fff;
+    background: #000000;
+}
+
+.colorgraph {
+    height: 5px;
+    border-top: 0;
+    background: #c4e17f;
+    border-radius: 5px;
+    background-image: -webkit-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+    background-image: -moz-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+    background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+    background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
 }

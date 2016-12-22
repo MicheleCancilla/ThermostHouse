@@ -34,7 +34,7 @@ class Users(ndb.Model):
     address = ndb.StructuredProperty(Address)
 
     # un utente può avere piu di un termsotato
-    thermostat = ndb.StructuredProperty(Thermostats, repeated=True)
+    thermostat = ndb.StructuredProperty(Thermostats, repeated=False)
 
     @classmethod
     def check_if_exists(cls, email):
@@ -97,10 +97,9 @@ class Users(ndb.Model):
             usr.image = image
             usr.put()
 
-    """ Return the ID of the user if exists"""
-
     @classmethod
     def check_password(cls, email, password):
+        """ Return the ID of the user if exists"""
         user = cls.check_if_exists(email)
 
         if user:
@@ -130,9 +129,29 @@ class Users(ndb.Model):
         return qry
 
     @classmethod
-    def get_all_thermostats_by_user(cls, user_id):
-        index = search.Index('thermostats')
-        # query
-        query = 'user_id:(%s)' % user_id
-        result = index.search(query)
-        return result.results
+    def get_usr_by_key(cls, key):
+        if not key:
+            return None
+        else:
+            return ndb.gql("SELECT * FROM Users where __key__ IN :1", key)
+
+    # @classmethod
+    # def get_all_thermostats_by_user(cls, user_id):
+    #     index = search.Index('thermostats')
+    #     # query
+    #     query = 'user_id:(%s)' % user_id
+    #     result = index.search(query)
+    #     return result.results
+
+    # QUERY sugli impianti (Utenti che possiedono un impianto registrato)
+    @classmethod
+    def get_user_thermostats(cls):
+        qry = cls.query()
+        result_key = []
+        for data in qry:
+            print data
+            if data.thermostat:
+                result_key.append(data.key)
+
+        qry = cls.get_usr_by_key(result_key)
+        return qry

@@ -95,7 +95,7 @@ class FacebookLogin(ThermostHouseRequestHandler):
             # Questa funzione fa riferimento agli script java contenuti nei seguenti file html
             #   - templates/login/register_controller.js.html
             #   - templates/login/login_controller.js.html
-
+            print "ci sononooooooooz"
             name = self.request.get('name')
             email = self.request.get('email')
             id = int(self.request.get('id'))

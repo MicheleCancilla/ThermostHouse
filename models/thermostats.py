@@ -5,9 +5,9 @@ from models.address import Address
 
 
 class Thermostats(ndb.Model):
-    user = ndb.KeyProperty(kind='Users')
+    user = ndb.KeyProperty(kind='Users')  # key of the user
     name = ndb.StringProperty(required=True)
-    home = ndb.StructuredProperty(Address, required=True)
+    house = ndb.StructuredProperty(Address, required=True)
     temperature = ndb.FloatProperty(default=0.0)
     hysteresis = ndb.FloatProperty(default=0.0)
 
@@ -38,5 +38,3 @@ class Thermostats(ndb.Model):
         # )
         #
         # index.put(doc)
-
-
