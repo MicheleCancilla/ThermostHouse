@@ -1,0 +1,6 @@
+<script>
+    $(".nav-active a").on("click", function () {
+        $(".nav-active").find(".active").removeClass("active");
+        $(this).parent().addClass("active");
+    });
+</script>

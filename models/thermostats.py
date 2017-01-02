@@ -5,7 +5,7 @@ from models.address import Address
 
 
 class Thermostats(ndb.Model):
-    user = ndb.KeyProperty(kind='Users')  # key of the user
+    # user = ndb.KeyProperty(kind='Users')  # key of the user, used to simulate one-to-many  relationship
     name = ndb.StringProperty(required=True)
     house = ndb.StructuredProperty(Address, required=True)
     temperature = ndb.FloatProperty(default=0.0)
@@ -38,3 +38,16 @@ class Thermostats(ndb.Model):
         # )
         #
         # index.put(doc)
+
+    @classmethod
+    def get_thermostats(cls):
+        qry = cls.query()
+        return qry
+
+    @classmethod
+    def get_thermostats_by_keys(cls, keys):
+        """Return all thermostats finding them by keys"""
+        if not keys:
+            return None
+        else:
+            return ndb.gql("SELECT * FROM Thermostats where __key__ in :1", keys)

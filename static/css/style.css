@@ -96,18 +96,18 @@ img {
 
 .main-header {
     text-align: center;
-    /*background: url(/static/img/home.jpg) no-repeat center center fixed;*/
+    background: url(/static/img/home.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    min-height: 650px;
+    min-height: 350px;
 }
-
 .home-h1 {
-    color: #fff;
+    color: #0f0f0f;
     font-size: 72px;
     text-shadow: 0 0 5px #222;
+    padding-top: 10px;
 }
 
 /*NAVBAR CSS*/
@@ -169,3 +169,17 @@ img {
     background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
     background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
 }
+
+/* Propietà mappa GOOGLE*/
+#map {
+    width: 800px;
+    height: 520px;
+    /* I margini sono nell'ordine: SUPERIORE, DESTRO, INFERIORE, SINISTRO (ovvero in senso orario a partire dal superiore)*/
+    display: inline-block;
+}
+
+#mapError {
+    /* I margini sono nell'ordine: SUPERIORE, DESTRO, INFERIORE, SINISTRO (ovvero in senso orario a partire dal superiore)*/
+    margin: 220px 15px 55px 0;
+}
+

@@ -1,26 +1,24 @@
-{% extends "index.html" %}
+{% extends "main.html" %}
 
 {% block title %}Errore{% endblock %}
 
-{% block maincontent %}
+{% block content %}
 
  <!-- file per la comunicazione di errori di GEOLOCALIZZAZIONE -->
 
- <!-- Caricamento dei fogli di stile CSS -->
-  <link href="CSS/error.css" rel="stylesheet" type="text/css" />
-  <link href="CSS/set_pages.css" rel="stylesheet" type="text/css" />
+    <div class="container">
 
-<div id="main-content">
-<div id="setError">
 
     <h1>Siamo spiacenti, non è stato possibile localizzarti</h1>
     <h2>Controlla che i valori inseriti siano corretti o riprova più tardi</h2>
 
-    <div id="setButton">
-        <a href="/modifica_profilo"><button type="button"> <i class="fa fa-arrow-left"></i> Indietro</button></a>
+        <div class="btn btn-danger">
+            <a href="/home">
+                <button type="button"><i class="fa fa-arrow-left"></i> Indietro</button>
+            </a>
     </div>
 
-</div>
-</div><!-- main-content -->
+
+    </div><!-- main-content -->
 
 {% endblock %}

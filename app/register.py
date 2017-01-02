@@ -42,6 +42,7 @@ class RegisterUser(ThermostHouseRequestHandler):
     def send_email(cls, to, user_id, confirmation_code, name):
         # the sender must come from our domain
         # appspotmail for this function!
+        logging.info("entra")
         email_object = mail.EmailMessage(
             sender=conf['EMAIL_SENDER'],
             subject='Hello ' + name + ' confirm your ThermostHouse account',
@@ -58,6 +59,7 @@ class RegisterUser(ThermostHouseRequestHandler):
             render(email_parameters)
         email_object.html = html_from_template
         email_object.send()
+        logging.info("hello")
 
     def post(self):
         """
@@ -67,6 +69,7 @@ class RegisterUser(ThermostHouseRequestHandler):
             name = self.request.get('name')
             email = self.request.get('email')
             password = self.request.get('password')
+
             status = 200
 
             # Tutti i parametri devono essere diversi da None

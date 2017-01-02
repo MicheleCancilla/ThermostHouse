@@ -46,8 +46,8 @@ class EditProfile(ThermostHouseRequestHandler):
         #         plant_image = "data:image/gif;base64," + encoded_image
 
         supp_dict = {}
-        if usr.address:
-            supp_dict = {"province": usr.address.province, "region": usr.address.region}
+        # if usr.address:
+        #     supp_dict = {"province": usr.address.province, "region": usr.address.region}
         # if usr.impianto:
         #     supp_dict.update({"tipo": usr.impianto.tipo})
         #     supp_dict.update({"alimentazione": usr.impianto.alimentazione})
@@ -56,15 +56,16 @@ class EditProfile(ThermostHouseRequestHandler):
 
         js_data = json.dumps(supp_dict)
 
-        # TODO create change_profile.html
+        # TODO create edit_profile.html
         self.render_json('account/edit_profile.html', js_data, usr_image=usr_image, plant_image=plant_image)
 
     @ThermostHouseRequestHandler.login_required
     def post(self):
         user = self.check_user_logged_in
 
-        # Acquisizione dei dati dell'utente
-        user.username = self.request.get('username')
+        # change the name
+        if self.request.get('username') and self.request.get('username') != user.username:
+            user.username = self.request.get('username')
 
         if self.request.get('fileUser'):
             image = self.request.get('fileUser')
@@ -72,62 +73,63 @@ class EditProfile(ThermostHouseRequestHandler):
         elif user.image:
             user.image = user.image
 
+        print "passato"
         # Acquisizione dei dati dell'indirizzo
-        ind = Address()
-        ind.province = self.request.get('province')
-        try:
-            ind.zip_code = int(self.request.get('zip_code'))
-            ind.number = int(self.request.get('number'))
-        except ValueError:
-            # L'eventualità che il parametro inserito non sia un numero è gestita lato client dal browser
-            pass
-
-        ind.region = self.request.get('region')
-        ind.street = self.request.get('street')
-        ind.city = self.request.get('city')
+        # ind = Address()
+        # try:
+        #     ind.province = self.request.get('province')
+        #     ind.zip_code = int(self.request.get('zip_code'))
+        #     ind.number = int(self.request.get('number'))
+        #     ind.region = self.request.get('region')
+        #     ind.street = self.request.get('street')
+        #     ind.city = self.request.get('city')
+        # except ValueError:
+        #     # L'eventualità che il parametro inserito non sia un numero è gestita lato client dal browser
+        #     pass
 
         # Chiamo la funzione di Geolocalizzazione su indirizzo
-        status_geocode = ind.geocode()
+        # status_geocode = ind.geocode()
+        #
+        # if status_geocode == 0:
+        # La localizzazione è andata a buon fine, proseguo
 
-        if status_geocode == 0:
-            # La localizzazione è andata a buon fine, proseguo
+        # Acquisizione dei dati dell'impianto
+        # imp = Impianto()
+        # imp.alimentazione = self.request.get('alimtype')
+        # try:
+        #     imp.capacita = int(self.request.get('capacita'))
+        # except ValueError:
+        #     # L'eventualità che il parametro inserito non sia un numero è gestita lato client dal browser
+        #     pass
+        #
+        # imp.tipo = self.request.get('tipo')
+        # imp.descrizione = self.request.get('descrizione')
+        #
+        # # Il noleggio è a True di default
+        # if self.request.get('nolotype') == 'False':
+        #     imp.noleggio = False
 
-            # Acquisizione dei dati dell'impianto
-            # imp = Impianto()
-            # imp.alimentazione = self.request.get('alimtype')
-            # try:
-            #     imp.capacita = int(self.request.get('capacita'))
-            # except ValueError:
-            #     # L'eventualità che il parametro inserito non sia un numero è gestita lato client dal browser
-            #     pass
-            #
-            # imp.tipo = self.request.get('tipo')
-            # imp.descrizione = self.request.get('descrizione')
-            #
-            # # Il noleggio è a True di default
-            # if self.request.get('nolotype') == 'False':
-            #     imp.noleggio = False
+        # if self.request.get('file'):
+        #     image = self.request.get('file')
+        #     imp.immagine = images.resize(image, 200, 200)
+        # elif user.impianto:
+        #     # Se era disponibile ricarico la vecchia immagine
+        #     imp.immagine = user.impianto.immagine
 
-            # if self.request.get('file'):
-            #     image = self.request.get('file')
-            #     imp.immagine = images.resize(image, 200, 200)
-            # elif user.impianto:
-            #     # Se era disponibile ricarico la vecchia immagine
-            #     imp.immagine = user.impianto.immagine
-
-            try:
-                user.address = ind
-                # user.impianto = imp
-                user.put()
-                # Al termine della modifica rimando alla pagina dell'utente
-                self.redirect('/account?utente=' + user.key.urlsafe())
-            except Exception as ex:
-                error_msg = "Exception '{ex}', {ex_type} "
-                logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
-                self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])
-        else:
-            # La localizzazione non è riuscita, mostro un messaggio di errore
-            self.render("communication/bad_location.html")
+        try:
+            # user.address = ind
+            # user.impianto = imp
+            user.put()
+            # Al termine della modifica rimando alla pagina dell'utente
+            # self.redirect('/account?utente=' + user.key.urlsafe())
+            self.redirect('/account')
+        except Exception as ex:
+            error_msg = "Exception '{ex}', {ex_type} "
+            logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
+            self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])
+            # else:
+            #     # La localizzazione non è riuscita, mostro un messaggio di errore
+            #     self.render("communication/bad_location.html")
 
 
 class ChangePassword(ThermostHouseRequestHandler):
@@ -151,11 +153,10 @@ class ChangePassword(ThermostHouseRequestHandler):
                 hashed_password = salt + sha256(salt + password).hexdigest()
                 user.password = hashed_password
                 user.put()
-                tmp_values = {
+                tpl_values = {
                     'user_password_changed': True
-
                 }
-                return self.render("account/change_password.html", **tmp_values)
+                return self.render("account/change_password.html", **tpl_values)
 
             self.redirect('/edit_profile')
 

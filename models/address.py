@@ -51,11 +51,9 @@ class Address(ndb.Model):
         })
 
         url = conf['GEOCODE_BASE_URL'] + '?' + urllib.urlencode(geo_args)
-        print url
 
         try:
             result = json.load(urllib.urlopen(url))
-            print result
             status = result["status"]
         except:
             status = None

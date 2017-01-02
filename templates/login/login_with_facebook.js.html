@@ -69,13 +69,13 @@
     window.fbAsyncInit = function () {
         FB.init({
             appId: '1061461490665882',
+            cookie: true,
             xfbml: true,
             version: 'v2.8'
         });
-        FB.AppEvents.logPageView();
+        {#        FB.AppEvents.logPageView();#}
     };
 
-    // Caricamento asincrono dell'SDK javascript di Facebook
     (function (d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) return;
@@ -92,7 +92,7 @@
     function getProfileImage() {
         FB.api('/me', 'GET', {fields: 'first_name,last_name,id,picture.width(150).height(150)'}, function (response) {
             {#            document.getElementById('status').innerHTML = console.log(response);#}
-{#            profileImage = response.picture.url.split('https://')[1]; //remove https to avoid any cert issues#}
+            {#            profileImage = response.picture.url.split('https://')[1]; //remove https to avoid any cert issues#}
             profileImage = response.picture.data.url.split('https://')[1]; //remove https to avoid any cert issues
             console.log(profileImage);
             {#            profileImage = response.picture.data.url#}
@@ -126,7 +126,7 @@
                 //user hit cancel button
                 console.log('User cancelled login or did not fully authorize.');
             }
-        }, {scope: 'public_profile,email'});
+        }, {auth_type: 'reauthenticate'}, {scope: 'public_profile,email'});
     }
 
 

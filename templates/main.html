@@ -11,19 +11,22 @@
     <link rel="stylesheet" href="/static/fonts/glyphicons-halflings-regular.eot">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/social-buttons.css">
+
+    {#    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>#}
+
 </head>
 <body>
-
 {% block content %}
-
 {% endblock %}
 
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+{#<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->#}
 <script src="/static/js/jquery.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
 
+{% include "commons/navbar.js.html" %}
 {% include "register/register.js.html" %}
 {% include "login/login_with_facebook.js.html" %}
+{% include "login/login_with_google.js.html" %}
 {% include "commons/navbar.html" %}
 
 </body>

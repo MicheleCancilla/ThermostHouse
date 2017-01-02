@@ -13,11 +13,10 @@
                 {#                <a class="navbar-brand" href="/">ThermostHouse</a>#}
                 <a class="navbar-brand" href="/">
                     <img style="float: left; "
-                         src="static/img/thermosthouse_logo.png"
+                         src="/static/img/thermosthouse_logo.png"
                          alt="ThermostHouse"><b>ThermostHouse</b>
                 </a>
             </div>
-
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div id="navbar" class="navbar-collapse collapse">
                 {#            <form class="navbar-form navbar-left" action="/search">#}
@@ -30,30 +29,34 @@
                 {#                        </span>#}
                 {#                </div>#}
                 {#            </form>#}
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="/home" class="">Home</a></li>
+                <ul class="nav nav-active navbar-nav">
+                    <li class="active">
+                        <a href="/home" class="">Home</a>
+                    </li>
                     <li><a href="/thermostat">Termostati</a></li>
                     <li><a href="#">Link</a></li>
                     <li><a href="#">Link</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right" style="font-size: 15px; word-spacing: 1px;">
                     {% if user %}
-                        <span class="glyphicon glyphicon-user"></span>
-                        <a href="/account?user={{ user.key.urlsafe() }}">
-                            <strong>
-                                {% if user.username|length <= 20 %}
-                                    {{ user.username }}
-                                {% else %}
-                                    {{ user.username[:20] }}
-                                {% endif %}
-                            </strong>
-                        </a>
-                        <br/>
-                        <span class="glyphicon glyphicon-log-out"></span>
-                        <strong><a href="/logout">Sign Out</a></strong>
-                        <br/>
+                        <li>
+                            <a class="nav" href="/account">
+                                <div class="glyphicon glyphicon-user">
+                                    {% if user.username|length <= 20 %}
+                                        {{ user.username }}
+                                    {% else %}
+                                        {{ user.username[:20] }}
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav" href="/logout">
+                                <div class="glyphicon glyphicon-log-out"> Sign Out</div>
+                            </a>
+                        </li>
                     {% else %}
-                        <li class="nav"><a href="register">Sign Up</a></li>
+                        <li class="nav"><a href="/register">Sign Up</a></li>
                         <li class="dropdown">
                             <a href="login" class="dropdown-toggle active" data-toggle="dropdown">Sign in <b
                                     class="caret"></b></a>

@@ -1,15 +1,43 @@
-# Copyright (C) 2012 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+"""Retain apiclient as an alias for googleapiclient."""
 
-__version__ = "1.2"
+from six import iteritems
+
+import googleapiclient
+
+try:
+    import oauth2client
+except ImportError:
+    raise RuntimeError(
+        'Previous version of google-api-python-client detected; due to a '
+        'packaging issue, we cannot perform an in-place upgrade. To repair, '
+        'remove and reinstall this package, along with oauth2client and '
+        'uritemplate. One can do this with pip via\n'
+        '  pip install -I google-api-python-client'
+    )
+
+from googleapiclient import channel
+from googleapiclient import discovery
+from googleapiclient import errors
+from googleapiclient import http
+from googleapiclient import mimeparse
+from googleapiclient import model
+from googleapiclient import sample_tools
+from googleapiclient import schema
+
+__version__ = googleapiclient.__version__
+
+_SUBMODULES = {
+    'channel': channel,
+    'discovery': discovery,
+    'errors': errors,
+    'http': http,
+    'mimeparse': mimeparse,
+    'model': model,
+    'sample_tools': sample_tools,
+    'schema': schema,
+}
+
+import sys
+
+for module_name, module in iteritems(_SUBMODULES):
+    sys.modules['apiclient.%s' % module_name] = module

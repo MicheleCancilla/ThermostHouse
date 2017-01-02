@@ -1,43 +1,30 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from framework.request_handler import ThermostHouseRequestHandler
-from conf.configuration_reader import conf
-from google.appengine.api import search
+import copy
+import json
+import logging
+
 from google.appengine.ext import ndb
-from models.users import Users
+
+from conf.configuration_reader import conf
+from framework.request_handler import ThermostHouseRequestHandler
 from models.address import Address
 from models.thermostats import Thermostats
-import base64
-import copy
-import logging
+from models.users import Users
 
 
 class ThermostatPage(ThermostHouseRequestHandler):
-    def set_auth_thermostat_data(self, auth_thermostat_user):
-        if auth_thermostat_user is None or auth_thermostat_user.thermostat is None:
-            return None
-
-        thermostat_data = {}
-
-        thermostat_data.update({'user': auth_thermostat_user.thermostat.user})
-        thermostat_data.update({'name': auth_thermostat_user.thermostat.name})
-        thermostat_data.update({'house': auth_thermostat_user.thermostat.house})
-        thermostat_data.update({'temperature': auth_thermostat_user.thermostat.temperature})
-        thermostat_data.update({'hysteresis': auth_thermostat_user.thermostat.hysteresis})
-        thermostat_data.update({'urlsafeKey': auth_thermostat_user.key.urlsafe()})
-
-        return thermostat_data
-
-    def set_thermostat_data(self, qry, auth_thermostat_user_key):
+    @ThermostHouseRequestHandler.login_required
+    def set_thermostat_data(self, qry):
         if qry is None:
             return None
-
         # Preparo i valori caricandoli in un dizionario (ad ogni giro devo azzerare il dizionario)
         list = []
         thermostat_data = {}
-        for data in qry:
-            if data.key == auth_thermostat_user_key or not data.thermostat:
+        for thermostat in qry:
+
+            if not thermostat:
                 # Casi "particolari" che non devono essere gestiti in questa situazione:
                 # - L'impianto è  dell'utente autenticato;
                 # - L'utente corrente non dispone di un impianto
@@ -46,16 +33,15 @@ class ThermostatPage(ThermostHouseRequestHandler):
                 # Vuoto il dizionario per il giro successivo
                 thermostat_data.clear()
 
-                thermostat_data.update({'user': data.thermostat.user})
-                thermostat_data.update({'name': data.thermostat.name})
-                thermostat_data.update({'home': data.thermostat.home})
-                thermostat_data.update({'temperature': data.thermostat.temperature})
-                thermostat_data.update({'hysteresis': data.thermostat.hysteresis})
-                thermostat_data.update({'urlsafeKey': data.key.urlsafe()})
+                # thermostat_data.update({'user': thermostat.user})
+                thermostat_data.update({'name': thermostat.name})
+                thermostat_data.update({'house': thermostat.house})
+                thermostat_data.update({'temperature': thermostat.temperature})
+                thermostat_data.update({'hysteresis': thermostat.hysteresis})
+                thermostat_data.update({'url_safe_key': thermostat.key.urlsafe()})
 
                 # Aggiungo l'elemento corrente alla lista
                 list.append(copy.deepcopy(thermostat_data))
-
         return list
 
     @ThermostHouseRequestHandler.login_required
@@ -64,63 +50,14 @@ class ThermostatPage(ThermostHouseRequestHandler):
         """ Visualizza le informazioni dei termostati, se già aggiunti. Altrimenti permette di
         aggiungerne uno
         """
-        user = self.request.get('user')
-
-        # Utente autenticato
-        auth_thermostat_user, auth_thermostat_user_key = self.get_auth_user()
+        user = self.check_user_logged_in
+        thermostats = Users.get_owned_thermostats(user)
         list = []
-
-        if user == "":
-            # Devo visualizzare tutti termostati
-
-            qry = Users.get_user_thermostats()
-            print qry
-            list = self.set_thermostat_data(qry, auth_thermostat_user_key)  # Carico correttamente i valori nella list
-        else:
-            # E' stato specificato un utente tramite URL, eseguo la ricerca
-            reconstructed_key = ndb.Key(urlsafe=user)
-
-            if reconstructed_key != auth_thermostat_user_key:
-                # Eseguo la ricerca
-                qry = ndb.gql('SELECT * FROM Users where __key__ IN :1', [reconstructed_key])
-                list = self.set_thermostat_data(qry,
-                                                auth_thermostat_user_key)  # Carico correttamente i valori nella list
-                auth_thermostat_user = None
+        # Devo visualizzare tutti termostati
+        list = self.set_thermostat_data(thermostats)  # Carico correttamente i valori nella list
 
         # Carico la pagina con i parametri degli utenti
-        self.render('thermostat-page/thermostat-page.html',
-                    auth_thermostat=self.set_auth_thermostat_data(auth_thermostat_user),
-                    thermostat_data=list)
-        # def get(self):
-        #     """ Visualizza le informazioni dei termostati, se già aggiunti. Altrimenti permette di
-        #     aggiungerne uno
-        #     """
-        #     user = self.request.get('user')
-        #
-        #     # Utente autenticato
-        #     auth_thermostat_user, auth_thermostat_user_key = self.get_auth_user()
-        #     list = []
-        #
-        #     if user == "":
-        #         # Devo visualizzare tutti termostati
-        #
-        #         qry = Users.get_user_thermostats()
-        #         list = self.set_thermostat_data(qry, auth_thermostat_user_key)  # Carico correttamente i valori nella list
-        #     else:
-        #         # E' stato specificato un utente tramite URL, eseguo la ricerca
-        #         reconstructed_key = ndb.Key(urlsafe=user)
-        #
-        #         if reconstructed_key != auth_thermostat_user_key:
-        #             # Eseguo la ricerca
-        #             qry = ndb.gql('SELECT * FROM Users where __key__ IN :1', [reconstructed_key])
-        #             list = self.set_thermostat_data(qry,
-        #                                             auth_thermostat_user_key)  # Carico correttamente i valori nella list
-        #             auth_thermostat_user = None
-        #
-        #     # Carico la pagina con i parametri degli utenti
-        #     self.render('thermostat-page/thermostat-page.html',
-        #                 auth_thermostat=self.set_auth_thermostat_data(auth_thermostat_user),
-        #                 thermostat_data=list)
+        self.render('thermostat-page/thermostat-page.html', thermostats_data=list)
 
 
 class CreateThermostat(ThermostHouseRequestHandler):
@@ -158,15 +95,133 @@ class CreateThermostat(ThermostHouseRequestHandler):
                 therm.user = user.key
                 therm.name = self.request.get('nameTH')
                 therm.house = address
-                therm.put()
-                user.thermostat = therm
+                therm_key = therm.put()
+
+                # therm.put() does not create anymore new thermostat table. a thermsotat is visible from user table
+                user.thermostat.append(therm_key)
                 user.put()
+                # latency introduced in order to guarantee the eventual consistency of ndb
+                import time
+                time.sleep(0.5)
                 self.redirect('/thermostat')
             except Exception as ex:
                 error_msg = "Exception '{ex}', {ex_type} "
                 logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
                 self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])
-
         else:
             # La localizzazione non è riuscita, mostro un messaggio di errore
             self.render("communication/bad_location.html")
+
+
+class SetThermostat(ThermostHouseRequestHandler):
+    @ThermostHouseRequestHandler.login_required
+    def get(self):
+        therm_safe_key = self.request.get('id')
+        template_values = {
+            'therm_safe_key': therm_safe_key
+        }
+        self.render("thermostat-page/set-thermostat.html", **template_values)
+
+    @ThermostHouseRequestHandler.login_required
+    def post(self):
+        therm_safe_key = self.request.get('id')
+        # retrieve the real key from the urlsafe
+        key = ndb.Key(urlsafe=therm_safe_key)
+
+        # retrieve the thermostat id
+        ident = key.id()
+        thermostat = Thermostats.get_by_id(int(ident))  # because recipe_id was a string
+
+        # taken the entity of the thermostat to update
+        try:
+            thermostat.temperature = float(self.request.get('temperature'))
+            thermostat.hysteresis = float(self.request.get('hysteresis'))
+            thermostat.put()
+            # latency introduced in order to guarantee the eventual consistency of ndb
+            import time
+            time.sleep(0.5)
+        except Exception as ex:
+            error_msg = "Exception '{ex}', {ex_type}"
+            logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
+            self.render('/communication/error.html', mail=conf['EMAIL_RECEIVER'])
+
+        self.redirect("/thermostat")
+
+
+class DeleteThermostat(ThermostHouseRequestHandler):
+    @ThermostHouseRequestHandler.login_required
+    def get(self):
+        therm_safe_key = self.request.get('id')
+        # retrieve the real key from the urlsafe
+        key = ndb.Key(urlsafe=therm_safe_key)
+
+        # get the thermostat entity
+        thermostat = key.get()
+        # delete the thermostat
+        thermostat.key.delete()
+
+        # update the list of thermostats owned by the user
+        user = self.check_user_logged_in
+        list = []
+        for thermostat in user.thermostat:
+            if key != thermostat:
+                list.append(thermostat)
+        user.thermostat = list
+
+        import time
+        time.sleep(0.5)
+        self.redirect("/thermostat")
+
+
+class ThermostatDeviceRequest(ThermostHouseRequestHandler):
+    def get(self):
+        string = "{'DeviceId':123453,'SequenceNumber':13,'RequestType':'standard','MessageId':'ilMioFantasticoId'," \
+                 "'Settings':{'TargetTemperature':10,'Hysteresis':20,'ColdDelay':20},'CurrentState':{'Temperature':10,'ColdState':'OFF','HotState':'OFF'}}"
+        import ast
+        data = ast.literal_eval(string)
+        if not data['DeviceId'] or not data['SequenceNumber'] or not data['RequestType'] \
+                or not data['MessageId'] or not data['Settings'] or not data['CurrentState'] \
+                or not data['Settings']['TargetTemperature'] or not data['Settings']['Hysteresis'] \
+                or not data['Settings']['ColdDelay'] or not data['CurrentState']['Temperature'] \
+                or not data['CurrentState']['ColdState'] or not data['CurrentState']['HotState']:
+            json_response_temp = {
+                'Response': 'False'
+            }
+            print "errore"
+        return
+
+    def post(self):
+        data = self.request.body
+        # data = urllib2.unquote(data).decode('utf8') no more needed
+        data = json.loads(data)
+
+        json_response = {}
+        if not data['DeviceId'] or not data['SequenceNumber'] or not data['RequestType'] \
+                or not data['MessageId'] or not data['Settings'] or not data['CurrentState'] \
+                or not data['Settings']['TargetTemperature'] or not data['Settings']['Hysteresis'] \
+                or not data['Settings']['ColdDelay'] or not data['CurrentState']['Temperature'] \
+                or not data['CurrentState']['ColdState'] or not data['CurrentState']['HotState']:
+            json_response_temp = {
+                'Response': 'False'
+            }
+            json_response.update(json_response_temp)
+        else:
+            device_id = data['DeviceId']
+            sequence_number = data['SequenceNumber']
+            request_type = data['RequestType']
+            message_id = data['MessageId']
+            settings = data['Settings']
+            current_state = data['CurrentState']
+
+            json_response_temp = {
+                'DeviceId': device_id,
+                'SequenceNumber': sequence_number,
+                'RequestType': request_type,
+                'MessageId': message_id,
+                'Settings': settings,
+                'CurrentState': current_state,
+                'Response': 'True'
+            }
+            json_response.update(json_response_temp)
+
+        self.json_response(status_code=200, **json_response)

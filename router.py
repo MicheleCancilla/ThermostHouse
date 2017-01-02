@@ -4,6 +4,8 @@
 
 from webapp2 import WSGIApplication
 from webapp2 import Route
+from app.decorator import decorator
+
 
 app = WSGIApplication(
     routes=[
@@ -13,14 +15,21 @@ app = WSGIApplication(
         Route('/register', handler='app.register.RegisterUser'),
         Route('/register_complete', handler='app.register.ConfirmRegistration'),
 
-        Route('/account/<user_id:[0-9]+>/confirm/<confirmation_code:[a-z0-9]{32}>', handler='app.register.ConfirmUser'),
+        # Route('/account/<user_id:[0-9]+>/confirm/<confirmation_code:[a-z0-9]{32}>', handler='app.register.ConfirmUser'),
         Route('/login', handler='app.login.LoginUser'),
         Route('/google_login', handler='app.login_manager.GoogleLogin'),
+        # Route('/oauth2callback', handler='app.login_manager.OauthCallback'),
+        Route(decorator.callback_path, handler=decorator.callback_handler()),
         Route('/facebook_login', handler='app.login_manager.FacebookLogin'),
         Route('/logout', handler='app.login_manager.LogOut'),
 
         Route('/thermostat', handler='app.thermostat.ThermostatPage'),
         Route('/create_thermostat', handler='app.thermostat.CreateThermostat'),
+        Route('/set_thermostat', handler='app.thermostat.SetThermostat'),
+        # Route('/set_thermostat/<therm_safe_key:[0-9a-zA-Z-]+>', handler='app.thermostat.SetThermostat'),
+        Route('/set_thermostat', handler='app.thermostat.SetThermostat'),
+        # Route('/delete_thermostat/<therm_safe_key:[0-9a-zA-Z-]+>', handler='app.thermostat.DeleteThermostat'),
+        Route('/delete_thermostat', handler='app.thermostat.DeleteThermostat'),
 
         Route('/account', handler='app.account.UserAccount'),
         Route('/account/new-recipe', handler='app.account.PostRecipe'),
@@ -28,6 +37,7 @@ app = WSGIApplication(
         Route('/recipe/<recipe_id:[0-9]+>', handler='app.recipe.RecipePage'),
         # [0-9]+' any numer [0,9] and at least 1 char
 
+        Route('/device', handler='app.thermostat.ThermostatDeviceRequest'),
 
         Route('/edit_profile', handler='app.edit_profile.EditProfile'),
         Route('/change_password', handler='app.edit_profile.ChangePassword'),

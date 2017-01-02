@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from google.appengine.ext import ndb
-from hashlib import sha256
-from base64 import b64encode
-from os import urandom
-from models.address import Address
-from models.thermostats import Thermostats
-from google.appengine.api import search
 import uuid
+from base64 import b64encode
+from hashlib import sha256
+from os import urandom
+
+from google.appengine.ext import ndb
+
+from models.thermostats import Thermostats
 
 
 class Users(ndb.Model):
@@ -31,17 +31,20 @@ class Users(ndb.Model):
 
     image = ndb.BlobProperty()  # Avatar dell'utente
 
-    address = ndb.StructuredProperty(Address)
+    # TODO ha senso l'address per l'utente?
+    # address = ndb.StructuredProperty(Address)
 
     # un utente può avere piu di un termsotato
-    thermostat = ndb.StructuredProperty(Thermostats, repeated=False)
+    # thermostat = ndb.StructuredProperty(Thermostats, repeated=True)
+    thermostat = ndb.KeyProperty(kind='Thermostats', repeated=True)
 
     @classmethod
     def check_if_exists(cls, email):
         return cls.query(cls.email == email).get()
 
     @classmethod
-    def add_new_user(cls, username, email, password, facebook=False, google=False, twitter=False, face_id=None):
+    def add_new_user(cls, username, email, password, facebook=False, google=False, twitter=False, face_id=None,
+                     google_id=None):
         user = cls.check_if_exists(email)
 
         if not user:
@@ -73,6 +76,7 @@ class Users(ndb.Model):
                     facebook=facebook,
                     twitter=twitter,
                     facebookID=face_id,
+                    googleID=google_id,
                 ).put()
 
                 return {
@@ -136,22 +140,26 @@ class Users(ndb.Model):
             return ndb.gql("SELECT * FROM Users where __key__ IN :1", key)
 
     # @classmethod
-    # def get_all_thermostats_by_user(cls, user_id):
+    # def get_thermostats_by_userkey(cls, user_id):
     #     index = search.Index('thermostats')
     #     # query
     #     query = 'user_id:(%s)' % user_id
     #     result = index.search(query)
     #     return result.results
+    @classmethod
+    def get_owned_thermostats(cls, user):
+        """Returns all the thermostats owned by an user"""
+        return Thermostats.get_thermostats_by_keys(user.thermostat)
 
     # QUERY sugli impianti (Utenti che possiedono un impianto registrato)
     @classmethod
-    def get_user_thermostats(cls):
+    def get_users_thermostats(cls):
+        """Return all the thermostats owned by ALL users"""
         qry = cls.query()
-        result_key = []
+        therm_keys = []
         for data in qry:
-            print data
             if data.thermostat:
-                result_key.append(data.key)
-
-        qry = cls.get_usr_by_key(result_key)
+                for therm in data.thermostat:
+                    therm_keys.append(therm)
+        qry = Thermostats.get_thermostats_by_keys(therm_keys)
         return qry

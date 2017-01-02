@@ -1,0 +1,34 @@
+{% extends "main.html" %}
+
+{% block title %}Set thermostat{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal" method="post" action="/set_thermostat">
+        <fieldset>
+            <legend>set thermostat</legend>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="temperature">New thermostat temperature</label>
+                <div class="col-md-4">
+                    <input id="temperature" name="temperature" type="number" step="0.01"
+                           placeholder="Thermostat temperature"
+                           class="form-control input-md" required autofocus>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="hysteresis">New Hysteresis</label>
+                <div class="col-md-4">
+                    <input class="form-control input-md" id="hysteresis" name="hysteresis" type="number" step="0.01"
+                           value=""
+                           placeholder="New hysteresis" required>
+                </div>
+            </div>
+        </fieldset>
+        <button class="btn btn-primary col-lg-1 col-lg-offset-8" type="submit"
+                name="id" value="{{ therm_safe_key }}">
+            <span>Set</span>
+            <i class="fa fa-thermometer-half"></i>
+        </button>
+    </form>
+{% endblock %}

@@ -3,19 +3,14 @@
 {% block title %}Account{% endblock %}
 
 {% block content %}
-
-    <!-- File per la visualizzaione dei profili utente -->
-
     <div class="container">
-        {% if autenticated_user %}
-            <!-- C'è un utente autenticato, lo visualizzo per primo -->
+        {% if user_data %}
             <div class="row col-lg-4">
-
-                {% if autenticated_user['image'] != None %}
-                    <img id="PhotoProfile" src="{{ autenticated_user['image'] }}"
-                         style=" height: 150px; width: 150px">
+                {% if user_data.image != None %}
+                    <img src="{{ user_data.image }}"
+                         style=" height: 160px; width: 160px">
                 {% else %}
-                    <div id="PhotoProfile"></div>
+                    <div></div>
                 {% endif %}
             </div>
 
@@ -23,111 +18,44 @@
                 <p>
                     <strong>Nome:</strong>
                     <span>
-                {% if autenticated_user['name'] == None %}
+                {% if user_data['username'] == None %}
                     -
                 {% else %}
-                    {{ autenticated_user['name'] }}
+                    {{ user_data['username'] }}
                 {% endif %}
                  </span>
                 </p>
-                <p>
-                    <strong>Citta:</strong>
-                    <span>
-                {% if autenticated_user['city'] == None %}
-                    -
-                {% else %}
-                    {{ autenticated_user['city'] }}
-                {% endif %}
-                 </span>
-                </p>
+                {#                <p>#}
+                {#                    <strong>Citta:</strong>#}
+                {#                    <span>#}
+                {#                {% if user_data['city'] == None %}#}
+                {#                    -#}
+                {#                {% else %}#}
+                {#                    {{ user_data['city'] }}#}
+                {#                {% endif %}#}
+                {#                 </span>#}
+                {#                </p>#}
                 <p>
                     <strong>E-mail:</strong>
                     <span>
-                {% if autenticated_user['mail'] == None %}
+                {% if user_data['email'] == None %}
                     -
                 {% else %}
-                    {{ autenticated_user['mail'] }}
+                    {{ user_data['email'] }}
                 {% endif %}
                  </span>
                 </p>
 
                 <div id="Buttons">
                     <a href="/edit_profile">
-                        <button id="ButtonMP" type="button">Modifica profilo</button>
+                        <button class="btn btn-default" type="button">Modifica profilo</button>
                     </a>
-                    {#                            {% if autenticated_user['plant'] != None %}#}
-                    {#                                <a href="/impianti?utente={{ autenticated_user['urlsafeKey'] }}">#}
-                    {#                                    <button id="ButtonVI" type="button">Vedi impianto</button>#}
-                    {#                                </a>#}
-                    {#                            {% endif %}#}
                 </div>
-
+                <a href="/change_password">
+                    <button class="btn btn-default" id="changeData" type="button">Cambia Password</button>
+                </a>
             </div>
-        {% endif %}
-
-        {% if usr_data %}
-            <!-- Ci sono utenti generici da visualizzare-->
-            {% for data in usr_data %}
-                <div id="ProfilePage">
-                    <div id="LeftCol">
-                        <div id="Photo">
-                            {% if data['image'] != None %}
-                                <img id="PhotoProfile" src="{{ data['image'] }}"
-                                     style=" height: 150px; width: 150px">
-                            {% else %}
-                                <div id="PhotoProfile"></div>
-                            {% endif %}
-                        </div>
-                        <div id="ProfileOptions">
-                            <!-- #ProfileOptions -->
-                        </div>
-                    </div>
-
-                    <div id="Info">
-                        <p>
-                            <strong>Nome:</strong>
-                            <span>
-                {% if data['name'] == None %}
-                    -
-                {% else %}
-                    {{ data['name'] }}
-                {% endif %}
-                 </span>
-                        </p>
-                        <p>
-                            <strong>city:</strong>
-                            <span>
-                {% if data['city'] == None %}
-                    -
-                {% else %}
-                    {{ data['city'] }}
-                {% endif %}
-                 </span>
-                        </p>
-                        <p>
-                            <strong>E-mail:</strong>
-                            <span>
-                {% if data['mail'] == None %}
-                    -
-                {% else %}
-                    {{ data['mail'] }}
-                {% endif %}
-                 </span>
-                        </p>
-
-                        {#                            <div id="Buttons">#}
-                        {#                                {% if data['plant'] != None %}#}
-                        {#                                    <a href="/impianti?utente={{ data['urlsafeKey'] }}">#}
-                        {#                                        <button id="ButtonVI" type="button"> Vedi impianto</button>#}
-                        {#                                    </a>#}
-                        {#                                {% endif %}#}
-                        {#                            </div>#}
-
-                    </div>
-                </div>
-
-            {% endfor %}
-        {% elif not autenticated_user %}
+        {% else %}
             <!-- LA RICERCA NON HA PRODOTTO RISULTATI, VISULIZZO UN MESSAGGIO-->
             <div id="noResult">
                 <h1>La ricerca non ha prodotto alcun risultato, <br/> controlla i parametri inseriti e prova di
@@ -135,4 +63,70 @@
             </div>
         {% endif %}
     </div>
+
+    {#        {% endif %}#}
+
+    {#        {% if usr_data %}#}
+    {#            <!-- Ci sono utenti generici da visualizzare-->#}
+    {#            {% for data in usr_data %}#}
+    {#                <div id="ProfilePage">#}
+    {#                    <div id="LeftCol">#}
+    {#                        <div id="Photo">#}
+    {#                            {% if data['image'] != None %}#}
+    {#                                <img id="PhotoProfile" src="{{ data['image'] }}"#}
+    {#                                     style=" height: 150px; width: 150px">#}
+    {#                            {% else %}#}
+    {#                                <div id="PhotoProfile"></div>#}
+    {#                            {% endif %}#}
+    {#                        </div>#}
+    {#                        <div id="ProfileOptions">#}
+    {#                            <!-- #ProfileOptions -->#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                    <div id="Info">#}
+    {#                        <p>#}
+    {#                            <strong>Nome:</strong>#}
+    {#                            <span>#}
+    {#                {% if data['name'] == None %}#}
+    {#                    -#}
+    {#                {% else %}#}
+    {#                    {{ data['name'] }}#}
+    {#                {% endif %}#}
+    {#                 </span>#}
+    {#                        </p>#}
+    {#                        <p>#}
+    {#                            <strong>city:</strong>#}
+    {#                            <span>#}
+    {#                {% if data['city'] == None %}#}
+    {#                    -#}
+    {#                {% else %}#}
+    {#                    {{ data['city'] }}#}
+    {#                {% endif %}#}
+    {#                 </span>#}
+    {#                        </p>#}
+    {#                        <p>#}
+    {#                            <strong>E-mail:</strong>#}
+    {#                            <span>#}
+    {#                {% if data['mail'] == None %}#}
+    {#                    -#}
+    {#                {% else %}#}
+    {#                    {{ data['mail'] }}#}
+    {#                {% endif %}#}
+    {#                 </span>#}
+    {#                        </p>#}
+    {##}
+    {#                            <div id="Buttons">#}
+    {#                                {% if data['plant'] != None %}#}
+    {#                                    <a href="/impianti?utente={{ data['urlsafeKey'] }}">#}
+    {#                                        <button id="ButtonVI" type="button"> Vedi impianto</button>#}
+    {#                                    </a>#}
+    {#                                {% endif %}#}
+    {#                            </div>#}
+    {##}
+    {#                    </div>#}
+    {#                </div>#}
+    {##}
+    {#            {% endfor %}#}
+
 {% endblock %}

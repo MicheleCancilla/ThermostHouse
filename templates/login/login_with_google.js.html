@@ -1,0 +1,45 @@
+<script>
+    function start() {
+        console.log("Loading..");
+        gapi.load('auth2', function () {
+            auth2 = gapi.auth2.init({
+                client_id: '569005838277-ndp0mp60lbo65jadreds4o2rvecef5fo.apps.googleusercontent.com'
+                // Scopes to request in addition to 'profile' and 'email'
+                //scope: 'additional_scope'
+            });
+        });
+    }
+</script>
+
+<script>
+    function signInCallback(authResult) {
+        if (authResult['code']) {
+            console.log("Chiamo la POST");
+            // Hide the sign-in button now that the user is authorized, for example:
+            {#            $('#logInGoogle').attr('style', 'display: none');#}
+
+            // Send the code to the server
+            $.ajax({
+                type: 'POST',
+                url: '/google_login',
+                success: function (result) {
+                    // Handle or verify the server response.
+                    console.log("success");
+                },
+                processData: false,
+                data: 'code=' + authResult['code']
+            });
+        } else {
+            // There was an error.
+            console.log("error");
+        }
+    }
+</script>
+
+<script>
+    $('#logInGoogle').click(function () {
+        // signInCallback defined in step 6.
+        console.log("login");
+        auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
+    });
+</script>

@@ -1,87 +1,93 @@
 {% extends "main.html" %}
 
-
 {% block title %}My thermostats{% endblock %}
 
 {% block content %}
-
-    {% if auth_thermostat %}
-
-        <!-- C'è un utente autenticato, il suo impianto lo visualizzo per primo (indipendentementee dalla ricerca) -->
-        <div id="ProfilePage">
-            <div id="Info">
-                <p>
-                    <strong>Nome:</strong>
-                    <span>
-                {% if auth_thermostat['name'] == None %}
-                    -
-                {% else %}
-                    {{ auth_thermostat['name'] }}
-                {% endif %}
-                 </span>
-                </p>
-                <p>
-                    <strong>Indirizzo:</strong>
-                    <span>
-                {% if auth_thermostat['house'] == None %}
-                    -
-                {% else %}
-                    {{ auth_thermostat['house'] }}
-                {% endif %}
-                 </span>
-                </p>
-                <p>
-                    <strong>Temperatura</strong>
-                    <span>
-                {% if auth_thermostat['temperature'] == None %}
-                    -
-                {% else %}
-                    {{ auth_thermostat['temperature'] }}
-                {% endif %}
-                 </span>
-                </p>
-                <p>
-                    <strong>Isteresi:</strong>
-                    <span>
-                {% if auth_thermostat['hysteresis'] == None %}
-                    -
-                {% else %}
-                    {{ auth_thermostat['hysteresis'] }}
-                {% endif %}
-                 </span>
-                </p>
-
-                {#            <p>#}
-                {#                <strong>Descrizione:</strong>#}
-                {#                <span>  #}
-                {#                {% if auth_thermostat['desc'] == None %}#}
-                {#                     -#}
-                {#                {% else %}#}
-                {#                     {{ auth_thermostat['desc'] }}#}
-                {#                {% endif %}#}
-                {#                 </span>#}
-                {#            </p>#}
-                <div id="Buttons">
-                    <a href="/edit_profile">
-                        <button id="ButtonMP" type="button">Modifica profilo</button>
-                    </a>
-                    <a href="/account?user{{ auth_thermostat['urlsafeKey'] }}">
-                        <button id="ButtonVP" type="button">Vedi profilo</button>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="endBlock">
-        </div>
-    {% else %}
-        <!-- l'utente non ha nessun termostato -->
-        <div id="noResult">
-            <h1>Non hai nessun termostato.</h1>
+    <div class="container col-lg-12">
+        <div class=" col-lg-8"><h2>I miei termostati:</h2></div>
+        <div class=" col-lg-4">
             <a class="btn btn-primary" href="/create_thermostat">Inserisci un termostato</a>
         </div>
-    {% endif %}
+
+        {% if thermostats_data %}
+            {% for data in thermostats_data %}
+                <!-- C'è un utente autenticato, il suo impianto lo visualizzo per primo (indipendentementee dalla ricerca) -->
+                <div class="form-horizontal col-lg-10"
+                     action="/set_thermostat" method="get"
+                     style="border: 2px solid black">
+
+                    <strong>Nome:</strong>
+                    <span>
+                {% if data.name == None %}
+                    -
+                {% else %}
+                    {{ data.name }}
+                {% endif %}
+                 </span>
+
+                    <strong>Indirizzo:</strong>
+                    <span>
+                {% if data['house.street'] == None %}
+                    -
+                {% else %}
+                    Via {{ data['house'].street }} {{ data['house'].number }},
+                    {{ data['house'].zip_code }}, {{ data['house'].city }},
+                    {{ data['house'].province }}, {{ data['house'].region }}
+                {% endif %}
+                 </span>
+
+                    <strong>Temperatura</strong>
+                    <span>
+                {% if data['temperature'] == None %}
+                    -
+                {% else %}
+                    {{ data['temperature'] }}
+                {% endif %}
+                 </span>
+
+                    <strong>Isteresi:</strong>
+                    <span>
+                {% if data['hysteresis'] == None %}
+                    -
+                {% else %}
+                    {{ data['hysteresis'] }}
+                {% endif %}
+                 </span>
+                    {#            <p>#}
+                    {#                <strong>Descrizione:</strong>#}
+                    {#                <span>  #}
+                    {#                {% if thermostats_data['desc'] == None %}#}
+                    {#                     -#}
+                    {#                {% else %}#}
+                    {#                     {{ thermostats_data['desc'] }}#}
+                    {#                {% endif %}#}
+                    {#                 </span>#}
+                    {#            </p>#}
+                    <form action="/delete_thermostat" method="get">
+                        <button class="btn btn-danger" type="submit"
+                                value="{{ thermostats_data[loop.index0].url_safe_key }}"
+                                name="id" style="float: right;">
+                            <i class="glyphicon glyphicon-remove">Delete</i>
+                        </button>
+                    </form>
+
+                    <form action="/set_thermostat" method="get">
+                        <button class="btn btn-primary" type="submit"
+                                value="{{ thermostats_data[loop.index0].url_safe_key }}"
+                                name="id" style="float: right;">
+                            Set Thermostat
+                        </button>
+                    </form>
+                </div>
+
+            {% endfor %}
+        {% else %}
+            <!-- l'utente non ha nessun termostato -->
+            <div id="noResult">
+                <h1>Non hai nessun termostato.</h1>
+            </div>
+        {% endif %}
+    </div>
     {#    <div class="container">#}
     {#        <div class="col-lg-5">#}
     {#            <div class="row">#}

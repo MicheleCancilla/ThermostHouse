@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-
+from conf.configuration_reader import conf, secret
 from framework.request_handler import ThermostHouseRequestHandler
 from cloudstorage import cloudstorage_api
 from google.appengine.api import blobstore, images
 from models.recipes import Recipes
+import logging
+import urllib2
 from models.users import Users
 from google.appengine.ext import ndb
 import copy
@@ -13,19 +15,19 @@ import base64
 
 
 class UserAccount(ThermostHouseRequestHandler):
-    def set_auth_usr_data(self, authenticated_user):
+    def set_usr_data(self, authenticated_user):
         if authenticated_user is None:
             return None
 
         usr_data = {}
 
-        usr_data.update({'name': authenticated_user.username})
-        if authenticated_user.address:
-            usr_data.update({'city': authenticated_user.address.city})
-        else:
-            usr_data.update({'city': None})
+        usr_data.update({'username': authenticated_user.username})
+        # if authenticated_user.address:
+        #     usr_data.update({'city': authenticated_user.address.city})
+        # else:
+        #     usr_data.update({'city': None})
 
-        if authenticated_user.image:
+        if authenticated_user.image and not authenticated_user.google:
             encoded_image = base64.b64encode(authenticated_user.image)
             src = "data:image/gif;base64," + encoded_image
             usr_data.update({'image': src})
@@ -37,92 +39,44 @@ class UserAccount(ThermostHouseRequestHandler):
         # else:
         #     usr_data.update({'plant': None})
 
-        usr_data.update({'mail': authenticated_user.email})
+        usr_data.update({'email': authenticated_user.email})
 
         usr_data.update({'urlsafeKey': authenticated_user.key.urlsafe()})
-        # usr_data.update({'user': authenticated_user.username})
 
         return usr_data
 
-    def set_usr_data(self, qry, auth_usr_key):
-        if qry is None:
-            return []
-
-        # Preparo i valori caricandoli in un dizionario
-        list = []
-        usr_data = {}
-        for data in qry:
-            if data.key == auth_usr_key:
-                # L'utente autenticato è un caso a parte, non lo devo gestire in questa situazione
-                pass
-            else:
-                # Vuoto il dizionario per il giro successivo
-                usr_data.clear()
-
-                usr_data.update({'name': data.username})
-                if data.address:
-                    usr_data.update({'city': data.address.city})
-                else:
-                    usr_data.update({'city': None})
-
-                if data.image:
-                    encoded_image = base64.b64encode(data.image)
-                    src = "data:image/gif;base64," + encoded_image
-                    usr_data.update({'image': src})
-                else:
-                    usr_data.update({'image': data.image})
-
-                # if data.impianto:
-                #     usr_data.update({'plant': data.impianto.tipo})
-                # else:
-                #     usr_data.update({'plant': None})
-                usr_data.update({'mail': data.email})
-                usr_data.update({'user': data.username})
-
-                usr_data.update({'urlsafeKey': data.key.urlsafe()})
-
-                # Aggiungo l'elemento corrente alla lista
-                list.append(copy.deepcopy(usr_data))
-
-        return list
-
     @ThermostHouseRequestHandler.login_required  # restrict access for not logged users
     def get(self):
-        # user_id = self.check_user_logged_in.key.id()
-        # recipes = Recipes.get_all_recipes_by_user(user_id)
-        #
-        # tpl_values = {
-        #     'recipes': recipes,
-        #
-        # }
-        # self.render('account/home.html', **tpl_values)
-        user = self.request.get('user')
+        # get the user information
+        user = self.check_user_logged_in
+        try:
+            user_data = self.set_usr_data(user)
+            tpl_values = {
+                'user_data': user_data,
+            }
+            # Carico la pagina con i parametri degli utenti
+            self.render('account/user_profile.html', **tpl_values)
+        except Exception as ex:
+            error_msg = "Exception '{ex}', {ex_type} "
+            logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
+            self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])
+            # user_id = self.check_user_logged_in.key.id()
 
-        # Utente autenticato
-        autenticated_user, autenticated_user_key = self.get_auth_user()
-        list = []
-
-        if user == "":
-            # Devo visualizzare tutti gli utenti iscritti al servizio
-
-            # Utenti
-            qry = Users.get_users()
-            list = self.set_usr_data(qry, autenticated_user_key)  # Carico correttamente i valori nella list
-        else:
-            # E' stato specificato un utente tramite URL, eseguo la ricerca
-            reconstructed_key = ndb.Key(urlsafe=user)
-
-            if reconstructed_key != autenticated_user_key:
-                # Eseguo la ricerca
-                qry = ndb.gql('SELECT * FROM Users where __key__ IN :1', [reconstructed_key])
-                list = self.set_usr_data(qry, autenticated_user_key)  # Carico correttamente i valori nella list
-                autenticated_user = None
-
-        # js_user_data = json.dumps(list)
-
-        # Carico la pagina con i parametri degli utenti
-        self.render('account/user_profile.html', autenticated_user=self.set_auth_usr_data(autenticated_user),
-                    usr_data=list)
+            #     user = self.request.get('user')
+            #
+            #     reconstructed_key = ndb.Key(urlsafe=user)
+            #
+            #     if reconstructed_key != autenticated_user_key:
+            #         # Eseguo la ricerca
+            #         qry = ndb.gql('SELECT * FROM Users where __key__ IN :1', [reconstructed_key])
+            #         list = self.set_usr_data(qry, autenticated_user_key)  # Carico correttamente i valori nella list
+            #         autenticated_user = None
+            #
+            # # js_user_data = json.dumps(list)
+            #
+            # # Carico la pagina con i parametri degli utenti
+            # self.render('account/user_profile.html', autenticated_user=self.set_auth_usr_data(autenticated_user),
+            #             usr_data=list)
 
 
 class PostRecipe(ThermostHouseRequestHandler):

@@ -10,7 +10,7 @@ EMAIL_VALIDATION_PATTERN='(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
 #
 ################### Domain ####################
 #
-DOMAIN_GOOGLE='http://www.thermostahouse.appspot.com'
+DOMAIN_GOOGLE='https://www.thermostahouse.appspot.com'
 #
 ################ GoogleGeocode ################
 #
