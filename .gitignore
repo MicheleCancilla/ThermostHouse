@@ -2,12 +2,14 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
+.idea/
 env/
 build/
 develop-eggs/
@@ -89,3 +91,5 @@ ENV/
 
 # Rope project settings
 .ropeproject
+ThermostHouse/
+static/img/home.jpg

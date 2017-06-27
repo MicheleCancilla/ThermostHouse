@@ -21,7 +21,7 @@ def plot(thermostat):
 
     tmin = 100
     tmax = -100
-    toffset = 10
+    toffset = 3
     data_to_plot = []
     temperature_to_plot = []
     if thermostat.history:
@@ -44,8 +44,8 @@ def plot(thermostat):
     ax.set_ylabel('Temperature', color='0.5')  # grayscale color
     ax.grid(True)
 
-    ax.set_xlim(last_month, datetime.date.today())
-    ax.set_ylim(tmin - toffset, tmax + toffset)
+    # ax.set_xlim(last_month, datetime.date.today())
+    # ax.set_ylim(tmin - toffset, tmax + toffset)
 
     # format the coords message box
     def temp(x):

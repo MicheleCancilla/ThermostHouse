@@ -2,8 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-    Il file login_manager.py serve per gestire tutti i tipi di login (Facebook e  Google) e di logout degli utenti
-
+File for managing the external authentication with google and facebook.
 """
 import logging
 import urllib2
@@ -26,7 +25,6 @@ class GoogleLogin(ThermostHouseRequestHandler):
     def get(self):
         if decorator.has_credentials():
             try:
-                # user = service.people().get(resourceName='people/me').execute(decorator.http())
                 user = service.people().get(userId='me').execute(http=decorator.http())
                 # an user has a structure like
 
@@ -56,7 +54,7 @@ class GoogleLogin(ThermostHouseRequestHandler):
 
                 our_user = Users.check_if_exists(email)
                 if not our_user:
-                    dict = Users.add_new_user(name, email, '123password321', False, True, False, None, id)
+                    dict = Users.add_new_user(name, email, '123password123', False, True, False, None, id)
                     Users.add_image(image_url, dict['user_id'])
                     Users.automatic_confirm_email(dict['user_id'])
                     try:
@@ -84,14 +82,11 @@ class GoogleLogin(ThermostHouseRequestHandler):
 
 class FacebookLogin(ThermostHouseRequestHandler):
     """
-        Per la gestione del login con Facebook
+        Responsible for Facebook Login
     """
 
     def post(self):
         try:
-            # Questa funzione fa riferimento agli script java contenuti nei seguenti file html
-            #   - templates/login/register_controller.js.html
-            #   - templates/login/login_controller.js.html
             name = self.request.get('name')
             email = self.request.get('email')
             id = int(self.request.get('id'))
@@ -108,9 +103,9 @@ class FacebookLogin(ThermostHouseRequestHandler):
 
             our_user = Users.check_if_exists(email)
             if not our_user:
-                # Genero una password casuale per poter creare l'utente (in futuro l'utente potrà accedere al
-                # servizio usando il login intero, per farlo dovrà semplicemente modificare la password)
-                dict = Users.add_new_user(name, email, '123password321', True, False, False, id)
+                # As soon as possible an user can change his password editing
+                # his profile page
+                dict = Users.add_new_user(name, email, '123password123', True, False, False, id)
                 Users.add_image(html_image, dict['user_id'])
                 Users.automatic_confirm_email(dict['user_id'])
                 try:
@@ -130,25 +125,24 @@ class FacebookLogin(ThermostHouseRequestHandler):
         except Exception as ex:
             error_msg = "Exception '{ex}', {ex_type} "
             logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
-            self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])
+            return self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])
 
 
 class LogOut(ThermostHouseRequestHandler):
     def get(self):
         try:
+            # Delete the cookie
+            self.response.delete_cookie("User", domain=conf['COOKIE_DOMAIN'])
 
-            # Elimino il cookie primario (faccio il logout)
-            self.response.delete_cookie("User")
-
-            # Se è un utente Google faccio il logout da Google
+            # If it's a google user the logout from google is done
             user = users.get_current_user()
             if user:
                 return self.redirect(users.create_logout_url('/'))
 
-            # Altrimenti ridireziono alla home
+            # home redirection
             return self.redirect('/')
 
         except Exception as ex:
             error_msg = "Exception '{ex}', {ex_type} "
             logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
-            self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])
+            return self.render('communication/error.html', mail=conf['EMAIL_RECEIVER'])

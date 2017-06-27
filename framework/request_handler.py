@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from webapp2 import RequestHandler, cached_property
-import os
 import jinja2
+import os
+from webapp2 import RequestHandler, cached_property
+
+from conf.configuration_reader import conf
 
 
 class ThermostHouseRequestHandler(RequestHandler):
@@ -16,7 +18,7 @@ class ThermostHouseRequestHandler(RequestHandler):
     )
 
     def render(self, template, **kwargs):
-        #aggiungo l'user nella risposta se questo è loggato
+        # add user if logged
         user = self.check_user_logged_in
         kwargs.update({
             'user': user,
@@ -26,10 +28,9 @@ class ThermostHouseRequestHandler(RequestHandler):
         self.response.out.write(html_from_template)
 
     def render_json(self, template, json, **kwargs):
-
-        # Metodo per il render di template, dati eventuali parametri come dizionario **kwargs e parametri json
-
-        # Se un utente è autenticato invio i parametri per la personalizzazione della pagina
+        """Render of templates, giving parameters (**kwargs dciotnary or
+        json parameter)"""
+        # Add user if logged
         user = self.check_user_logged_in
         kwargs.update({
             'user': user,
@@ -55,9 +56,15 @@ class ThermostHouseRequestHandler(RequestHandler):
         from framework.cookie_handler import sign_cookie
 
         signed_cookie_value = sign_cookie(value)
-        self.response.headers.add_header('Set-Cookie', '%s=%s; Path=/' % (name, signed_cookie_value))
+        self.response.headers.add_header('Set-Cookie', '%s=%s; Domain=%s; Path=/' % (
+            name, signed_cookie_value, conf['COOKIE_DOMAIN']))
 
-    # Per la gestione delle email in fase di login tramite sistemi di terze parti
+    # Overload of send_email
+    def send_email(self, to, user_id, confirmation_code, name):
+        from framework.email_handler import send_email
+        return send_email(to, user_id, confirmation_code, name)
+
+    # Overload of send_welcome_email
     def send_welcome_email(self, to, user_id, confirmation_code, name):
         from framework.email_handler import send_welcome_email
         return send_welcome_email(to, user_id, confirmation_code, name)
@@ -89,13 +96,13 @@ class ThermostHouseRequestHandler(RequestHandler):
 
         return check_login
 
-    def get_auth_user(self):
-        # Controllo se c'è un utente autenticato
-        auth_user = self.check_user_logged_in
-        if auth_user:
-            auth_user_key = auth_user.key
-        else:
-            # Non c'è un utente autenticato
-            return None, None
-
-        return auth_user, auth_user_key
+    # def get_auth_user(self):
+    #     # Controllo se c'è un utente autenticato
+    #     auth_user = self.check_user_logged_in
+    #     if auth_user:
+    #         auth_user_key = auth_user.key
+    #     else:
+    #         # Non c'è un utente autenticato
+    #         return None, None
+    #
+    #     return auth_user, auth_user_key

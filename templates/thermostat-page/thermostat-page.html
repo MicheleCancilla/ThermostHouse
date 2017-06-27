@@ -1,23 +1,44 @@
 {% extends "main.html" %}
 
-{% block title %}My thermostats{% endblock %}
+{% block title %}I miei termostati{% endblock %}
 
 {% block content %}
-    <div class="container col-lg-12">
-        <div class=" col-lg-8"><h2>I miei termostati:</h2></div>
-        <div class=" col-lg-4">
-            <a class="btn btn-primary" href="/create_thermostat">Inserisci un termostato</a>
+
+
+    <div class="container col-lg-10 col-lg-offset-1">
+        <div class="row">
+            <div class="form-horizontal">
+                <a class="btn btn-primary" id="reload_button" href="/thermostat">
+                    <i class="fa fa-refresh"></i>
+                </a>
+
+                <a class="btn btn-primary" href="/create_thermostat">Inserisci un termostato</a>
+            </div>
         </div>
+        <div class="row">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">I miei termostati:</h3>
+                </div>
+                <div class="panel-body">
+                    {% if thermostats_data %}
+                        <div class="list-group">
 
-        {% if thermostats_data %}
-            {% for data in thermostats_data %}
-                <!-- C'è un utente autenticato, il suo impianto lo visualizzo per primo (indipendentementee dalla ricerca) -->
-                <div class="form-horizontal col-lg-10"
-                     action="/set_thermostat" method="get"
-                     style="border: 2px solid black">
+                            {% for data in thermostats_data %}
+                                <!-- Show thermostat data -->
+                                <div class="list-group-item"
+                                     action="/set_thermostat" method="get">
 
-                    <strong>Nome:</strong>
-                    <span>
+                                    <strong>ID:</strong>
+                                    <span>
+                {% if data.ID == None %}
+                    -
+                {% else %}
+                    {{ data.ID }}
+                {% endif %}
+                 </span>
+                                    <strong>Nome:</strong>
+                                    <span>
                 {% if data.name == None %}
                     -
                 {% else %}
@@ -25,110 +46,114 @@
                 {% endif %}
                  </span>
 
-                    <strong>Indirizzo:</strong>
-                    <span>
-                {% if data['house.street'] == None %}
-                    -
-                {% else %}
-                    Via {{ data['house'].street }} {{ data['house'].number }},
-                    {{ data['house'].zip_code }}, {{ data['house'].city }},
-                    {{ data['house'].province }}, {{ data['house'].region }}
-                {% endif %}
-                 </span>
+                                    <strong>Indirizzo:</strong>
+                                    <span">
+                                    {% if data['address.street'] == None %}
+                                        -
+                                    {% else %}
+                                        Via {{ data['address'].street }} {{ data['address'].number }},
+                                        {{ data['address'].zip_code }}, {{ data['address'].city }},
+                                        {{ data['address'].province }}, {{ data['address'].region }}
+                                    {% endif %}
+                                    </span>
+                                    <br>
+                                    <form action="/set_thermostat" method="post">
+                                        <div class="input-group">
 
-                    <strong>Temperatura</strong>
-                    <span>
-                {% if data['temperature'] == None %}
-                    -
-                {% else %}
-                    {{ data['temperature'] }}
-                {% endif %}
-                 </span>
+                                            <strong>Temperatura: </strong>
+                                            <input class="input-sm" type="number" min="0" max="99" name="temp"
+                                                   step="0.1" title="temp"
+                                                   value=
+                                                           {% if data['temperature'] == None %}
+                                                               "0"
+                                                           {% else %}
+                                                               "{{ data['temperature'] }}"
+                                                           {% endif %}
+                                            >
+                                            <strong>Isteresi: </strong>
+                                            <input class="input-sm" type="number" min="0.5" max="9.9" name="hyst"
+                                                   step="0.1" title="hyst"
+                                                   value=
+                                                           {% if data['hysteresis'] == None %}
+                                                               "0.5"
+                                                           {% else %}
+                                                               "{{ data['hysteresis'] }}"
+                                                           {% endif %}
+                                            >
+                                            <strong>Cold Delay: </strong>
+                                            <input class="input-sm" type="number" min="0" max="9" name="cold_delay"
+                                                   step="1"
+                                                   title="cold_delay"
+                                                   value=
+                                                           {% if data['cold_delay'] == None %}
+                                                               "0"
+                                                           {% else %}
+                                                               "{{ data['cold_delay'] }}"
+                                                           {% endif %}
+                                            >
+                                        </div>
+                                        <button class="btn btn-primary" type="submit"
+                                                value="{{ data.ID }}"
+                                                name="id" style="float: right;">
+                                            <i class="fa fa-edit">Modifica</i>
 
-                    <strong>Isteresi:</strong>
-                    <span>
-                {% if data['hysteresis'] == None %}
-                    -
-                {% else %}
-                    {{ data['hysteresis'] }}
-                {% endif %}
-                 </span>
-                    {#            <p>#}
-                    {#                <strong>Descrizione:</strong>#}
-                    {#                <span>  #}
-                    {#                {% if thermostats_data['desc'] == None %}#}
-                    {#                     -#}
-                    {#                {% else %}#}
-                    {#                     {{ thermostats_data['desc'] }}#}
-                    {#                {% endif %}#}
-                    {#                 </span>#}
-                    {#            </p>#}
-                    <form action="/delete_thermostat" method="get">
-                        <button class="btn btn-danger" type="submit"
-                                value="{{ thermostats_data[loop.index0].url_safe_key }}"
-                                name="id" style="float: right;">
-                            <i class="glyphicon glyphicon-remove">Delete</i>
-                        </button>
-                    </form>
+                                        </button>
+                                    </form>
 
-                    <form action="/set_thermostat" method="get">
-                        <button class="btn btn-primary" type="submit"
-                                value="{{ thermostats_data[loop.index0].url_safe_key }}"
-                                name="id" style="float: right;">
-                            Set Thermostat
-                        </button>
-                    </form>
+                                    <form action="/delete_thermostat" method="post">
+                                        <button class="btn btn-danger" type="submit"
+                                                value="{{ data.ID }}"
+                                                name="id" style="float: right;">
+                                            <i class="glyphicon glyphicon-remove">Rimuovi</i>
+                                        </button>
+                                    </form>
+
+
+                                    <div class="row">
+                                        <div class="form-group col-lg-6">
+                                            {{ thermostats_data[loop.index0].chart }}
+                                        </div>
+                                    </div>
+
+                                    {% if exported and exported == data.ID %}
+                                        <button class="btn btn-success" type="submit"
+                                                name="id" id="export-button">
+                                            <span id="export-button-message">Esportato</span>
+                                            <i class="fa fa-thumbs-up"></i>
+                                        </button>
+                                    {% else %}
+                                        <form action="/export" method="get" onsubmit="return onClickChangeButton()">
+                                            <button class="btn btn-success" type="submit"
+                                                    value="{{ data.ID }}" name="id" id="export-button">
+                                                <span id="export-button-message">
+                                                    <i class="fa fa-table" id="export-button-icon"></i>
+                                                    Esporta in Sheets
+                                                </span>
+
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <!-- l'utente non ha nessun termostato -->
+                        <h1 class="text-danger text-center"><span>Non hai nessun termostato.</span></h1>
+                    {% endif %}
                 </div>
-
-            {% endfor %}
-        {% else %}
-            <!-- l'utente non ha nessun termostato -->
-            <div id="noResult">
-                <h1>Non hai nessun termostato.</h1>
             </div>
-        {% endif %}
+        </div>
     </div>
-    {#    <div class="container">#}
-    {#        <div class="col-lg-5">#}
-    {#            <div class="row">#}
-    {#                <h1>{{ recipe.title }}</h1>#}
-    {#            </div>#}
-    {##}
-    {#            <ul class="square">#}
-    {#                {% if recipe.cuisine %}#}
-    {#                    <li><h4>Cuisine: {{ recipe.cuisine }}</h4></li>#}
-    {#                {% endif %}#}
-    {#                {% if recipe.difficulty %}#}
-    {#                    <li><h4>Difficulty: {{ recipe.difficulty }}</h4></li>#}
-    {#                {% endif %}#}
-    {#                <li><h4>Prep Time: {{ recipe.prep_time }}</h4></li>#}
-    {#                <li><h4>Cook Time: {{ recipe.cook_time }}</h4></li>#}
-    {#            </ul>#}
-    {#        </div>#}
-    {#        <div class="col-lg-7">#}
-    {#            <img src="{{ recipe.photo_url }}=s400" style="width: auto; height: auto;">#}
-    {#        </div>#}
-    {##}
-    {#        <div class="col-lg-5">#}
-    {#            <h4>Ingredients:</h4>#}
-    {#            <ul class="square">#}
-    {#                {% for ingredient in recipe.ingredients %}#}
-    {#                    <li>#}
-    {#                        {{ ingredient['amount'] if ingredient['amount'] != None }} {{ ingredient['unit'] if ingredient['unit'] != None }} {{ ingredient['ingredient'] if ingredient['ingredient']!= None }}#}
-    {#                    </li>#}
-    {#                {% endfor %}#}
-    {#            </ul>#}
-    {#        </div>#}
-    {##}
-    {#        <div class="col-lg-7">#}
-    {#            <h4>Directions to prepare {{ recipe.title }}:</h4>#}
-    {#            <ol>#}
-    {#                {% for direction in recipe.directions %}#}
-    {#                    <li>#}
-    {#                        {{ direction }}#}
-    {#                    </li>#}
-    {#                {% endfor %}#}
-    {#            </ol>#}
-    {#        </div>#}
-    {#    </div>#}
+    <script type="text/javascript">
+
+        function onClickChangeButton() {
+            var export_button = $('#export-button-message');
+            export_button.html('Esporto...');
+
+            var export_button_icon = $('#export-button-icon');
+            export_button_icon.removeClass('fa fa-table').addClass('fa fa-cog fa-spin');
+        }
+    </script>
 {% endblock %}

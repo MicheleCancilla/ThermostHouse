@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import uuid
+import os
 from base64 import b64encode
 from hashlib import sha256
 from os import urandom
@@ -9,6 +10,7 @@ from os import urandom
 from google.appengine.ext import ndb
 
 from models.thermostats import Thermostats
+from google.appengine.api import images
 
 
 class Users(ndb.Model):
@@ -19,24 +21,23 @@ class Users(ndb.Model):
     confirmation_code = ndb.StringProperty(required=True)
     confirmed_email = ndb.BooleanProperty(default=False)
 
-    timestamp = ndb.DateTimeProperty(auto_now_add=True)  # Date della registrazione
+    # Date of registration
+    timestamp = ndb.DateTimeProperty(auto_now_add=True)
 
-    facebookID = ndb.IntegerProperty()  # Id di Facebook
-    googleID = ndb.StringProperty()  # Id di Google
-    twitterID = ndb.StringProperty()  # Id di Twitter
+    facebookID = ndb.IntegerProperty()  # Facebook Id
+    googleID = ndb.StringProperty()  # Google Id
+    twitterID = ndb.StringProperty()  # Twitter Id
 
-    facebook = ndb.BooleanProperty(default=False)  # Vera se è un utente di Facebook
-    google = ndb.BooleanProperty(default=False)  # Vera se è un utente di Google
-    twitter = ndb.BooleanProperty(default=False)  # Vera se è un utente di Twitter
+    facebook = ndb.BooleanProperty(default=False)
+    google = ndb.BooleanProperty(default=False)
+    twitter = ndb.BooleanProperty(default=False)
 
     image = ndb.BlobProperty()  # Avatar dell'utente
 
-    # TODO ha senso l'address per l'utente?
-    # address = ndb.StructuredProperty(Address)
+    # An user can have more than one thermostat
+    # thermostat = ndb.KeyProperty(kind='Thermostats', repeated=True)
 
-    # un utente può avere piu di un termsotato
-    # thermostat = ndb.StructuredProperty(Thermostats, repeated=True)
-    thermostat = ndb.KeyProperty(kind='Thermostats', repeated=True)
+    API_Key = ndb.StringProperty(default=None)
 
     @classmethod
     def check_if_exists(cls, email):
@@ -55,16 +56,15 @@ class Users(ndb.Model):
                     'message': 'La password deve contenere almeno 5 caratteri'
                 }
             else:
-                # Creazione del sale: generato casualmente e diverso per tutti gli utenti
+                # Salt creation, generated randomly and different for each user
                 random_bytes = urandom(64)
                 salt = b64encode(random_bytes).decode('utf-8')
 
-                # sha256 restituisce un oggetto che converto in stringa con hexdigest
                 hashed_password = salt + sha256(salt + password).hexdigest()
 
                 # Il sale e la password possono essere salvati nello stesso campo perche il sale ha lunghezza fissa
 
-                # Il confirmation code per il check dell'email viene generato random
+                # Random confirmation code
                 confirmation_code = str(uuid.uuid4().get_hex())
 
                 new_user_key = cls(
@@ -86,7 +86,7 @@ class Users(ndb.Model):
                 }
 
         else:
-            # Mail gia presente
+            # Mail already exists
             return {
                 'created': False,
                 'title': 'La mail è già in uso',
@@ -95,11 +95,11 @@ class Users(ndb.Model):
 
     @classmethod
     def add_image(cls, image, user_id):
-        # La funzione di ricerca per chiavi vuole in ingresso una lista di chiavi
-        usr = Users.get_by_id(int(user_id))
-        if usr and image is not None:
-            usr.image = image
-            usr.put()
+        # get the user by user_id
+        user = Users.get_by_id(int(user_id))
+        if user and image is not None:
+            user.image = image
+            user.put()
 
     @classmethod
     def check_password(cls, email, password):
@@ -121,7 +121,7 @@ class Users(ndb.Model):
 
     @classmethod
     def automatic_confirm_email(cls, usr_id):
-        # Un utente che si registra con un sistema di autenticazione esterno non ha bisogno di confermare la mail
+        # Confirmed automatically if external authentication method is used
         usr = Users.get_by_id(usr_id)
         if usr:
             usr.confirmed_email = True
@@ -139,27 +139,8 @@ class Users(ndb.Model):
         else:
             return ndb.gql("SELECT * FROM Users where __key__ IN :1", key)
 
-    # @classmethod
-    # def get_thermostats_by_userkey(cls, user_id):
-    #     index = search.Index('thermostats')
-    #     # query
-    #     query = 'user_id:(%s)' % user_id
-    #     result = index.search(query)
-    #     return result.results
     @classmethod
     def get_owned_thermostats(cls, user):
-        """Returns all the thermostats owned by an user"""
-        return Thermostats.get_thermostats_by_keys(user.thermostat)
+        """Returns all the thermostats owned by AN user"""
+        return Thermostats.get_thermostats_by_owner(user.key)
 
-    # QUERY sugli impianti (Utenti che possiedono un impianto registrato)
-    @classmethod
-    def get_users_thermostats(cls):
-        """Return all the thermostats owned by ALL users"""
-        qry = cls.query()
-        therm_keys = []
-        for data in qry:
-            if data.thermostat:
-                for therm in data.thermostat:
-                    therm_keys.append(therm)
-        qry = Thermostats.get_thermostats_by_keys(therm_keys)
-        return qry

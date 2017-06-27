@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "main.html" %}
 
-</body>
-</html>
+{% block title %}Informazioni{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <h1 class="title-h1">About Thermosthouse</h1>
+        </div>
+        <div class="row col-lg-6">
+            <span>
+                Thermosthouse è uno strumento innovativo che ti permette di connetterti ad ogni tuo termostato e di
+                poterlo controllare direttamente da casa. Attraverso una comoda interfaccia potrai creare nuovi termostati
+                e poi poterli controllare, visualizzando lo storico di tutte le temperature registrate.
+                <br>
+                Thermosthouse garantirà che gli ultimi parametri da te impostati siano correttamente inoltrati al tuo termostato.
+            </span>
+        </div>
+    </div>
+
+{% endblock %}

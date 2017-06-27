@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-    File per la gestione di:
-     - registrazione di un nuovo utente
-     - gestione dell'invio di mail di conferma
-     - conferma della mail
-
+    File that allows:
+     - registration of a new user
+     - send of confirmation email
+     - confirm of the email
 """
 
 from framework.request_handler import ThermostHouseRequestHandler
@@ -14,7 +13,6 @@ from models.users import Users
 from google.appengine.api import mail
 from conf.configuration_reader import conf, secret
 
-import json
 import re
 import logging
 
@@ -22,17 +20,11 @@ import logging
 class RegisterUser(ThermostHouseRequestHandler):
     def get(self):
         try:
-            # Se sono già loggato non posso eseguire una registrazione
+            # No register page if already logged in
             if self.check_user_logged_in:
-                # return self.redirect('/register')
-                self.render('register/register.html')
-
+                return self.redirect('/home')
             else:
-                # dict = {'fb_key': secret['FACEBOOK_APP_ID'], 'fb_key_localhost': secret['FACEBOOK_APP_ID_LOCALHOST']}
-                # js_data = json.dumps(dict)
-                # self.render_json('register/register.html', js_data)
-                self.render('register/register.html')
-
+                return self.render('register/register.html')
         except Exception as ex:
             error_msg = "Exception '{ex}', {ex_type} "
             logging.error(error_msg.format(ex=ex, ex_type=type(ex)))
@@ -42,7 +34,6 @@ class RegisterUser(ThermostHouseRequestHandler):
     def send_email(cls, to, user_id, confirmation_code, name):
         # the sender must come from our domain
         # appspotmail for this function!
-        logging.info("entra")
         email_object = mail.EmailMessage(
             sender=conf['EMAIL_SENDER'],
             subject='Hello ' + name + ' confirm your ThermostHouse account',
@@ -55,24 +46,19 @@ class RegisterUser(ThermostHouseRequestHandler):
             'confirmation_code': confirmation_code,
             'name': name,
         }
-        html_from_template = cls.jinja_env.get_template('register/confirmation_email.html').\
+        html_from_template = cls.jinja_env.get_template('register/confirmation_email.html'). \
             render(email_parameters)
         email_object.html = html_from_template
         email_object.send()
-        logging.info("hello")
 
     def post(self):
-        """
-            Funzione per l'acquisizione di tutti i parametri del form e per il controllo degli stessi
-        """
         try:
             name = self.request.get('name')
             email = self.request.get('email')
             password = self.request.get('password')
-
             status = 200
 
-            # Tutti i parametri devono essere diversi da None
+            # All parameters must be true
             if name and email and password:
                 name = name.title()
 
@@ -88,7 +74,7 @@ class RegisterUser(ThermostHouseRequestHandler):
                     email_validation_pattern = conf['EMAIL_VALIDATION_PATTERN']
 
                     if re.match(email_validation_pattern, email):
-                        # La mail ha una struttura valida
+                        # Mail has a valid structure
                         user = Users.add_new_user(name, email, password)
 
                         if user['created']:
@@ -145,9 +131,7 @@ class RegisterUser(ThermostHouseRequestHandler):
 
 class ConfirmUser(ThermostHouseRequestHandler):
     """
-        Per gestire la conferma della mail di un utente che si è registrato a ShareBrew utilizzando
-        la procedura interna all'applicazione
-
+        Handler for confirmation of internal user
     """
 
     def get(self, user_id, confirmation_code):
@@ -164,7 +148,7 @@ class ConfirmUser(ThermostHouseRequestHandler):
             tpl_values = {
                 'email_confirmed': confirmed
             }
-
+            print "ciao"
             self.render('register/mail_confirmation_page.html', **tpl_values)
 
         except Exception as ex:

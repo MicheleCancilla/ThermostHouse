@@ -1,5 +1,8 @@
-google-api-python-client>=1.5
+google-api-python-client
 httplib2>=0.9.2
 uritemplate>=3.0.0
+numpy
+matplotlib==1.2.0
+python-dateutil
 jinja2
 webapp2

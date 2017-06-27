@@ -1,33 +1,42 @@
 {% extends "main.html" %}
 
-{% block title %}Set thermostat{% endblock %}
+{% block title %}Modifica termostato{% endblock %}
 
 {% block content %}
-    <form class="form-horizontal" method="post" action="/set_thermostat">
+    <form class="form-horizontal col-lg-offset-2 col-lg-8" method="post" action="/set_thermostat">
         <fieldset>
-            <legend>set thermostat</legend>
+            <legend>Modifica termostato</legend>
 
             <div class="form-group">
-                <label class="col-md-4 control-label" for="temperature">New thermostat temperature</label>
-                <div class="col-md-4">
-                    <input id="temperature" name="temperature" type="number" step="0.01"
-                           placeholder="Thermostat temperature"
+                <label class="col-lg-4 control-label" for="temperature">Nuova temperatura</label>
+                <div class="col-lg-4">
+                    <input id="temperature" name="temperature" type="number" step="0.1"
+                           placeholder="Nuova temperatura"
                            class="form-control input-md" required autofocus>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-md-4 control-label" for="hysteresis">New Hysteresis</label>
-                <div class="col-md-4">
-                    <input class="form-control input-md" id="hysteresis" name="hysteresis" type="number" step="0.01"
+                <label class="col-lg-4 control-label" for="hysteresis">Nuova isteresi</label>
+                <div class="col-lg-4">
+                    <input class="form-control input-md" id="hysteresis" name="hysteresis" type="number" step="0.1"
                            value=""
-                           placeholder="New hysteresis" required>
+                           placeholder="Nuova isteresi" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg-4 control-label" for="cold_delay">Nuovo Cold Delay</label>
+                <div class="col-lg-4">
+                    <input class="form-control input-md" id="cold_delay" name="cold_delay" type="number" step="1"
+                           value=""
+                           placeholder="Nuovo Cold Delay" required>
                 </div>
             </div>
         </fieldset>
         <button class="btn btn-primary col-lg-1 col-lg-offset-8" type="submit"
-                name="id" value="{{ therm_safe_key }}">
-            <span>Set</span>
+                name="id" value="{{ therm_id }}">
+                <span>Modifica</span>
             <i class="fa fa-thermometer-half"></i>
         </button>
     </form>

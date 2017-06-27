@@ -1,23 +1,19 @@
 #
-# File di configurazione: qui sono riportati tutti i parametri di configurazione dell'applicazione (esclusi i segreti)
+# Configuration file: contains all application parameters
 #
 #################### Email ####################
 #
 EMAIL_RECEIVER='pritttt4@gmail.com'
 EMAIL_SENDER='noreply@thermosthouse.appspotmail.com'
-EMAIL_REQUEST_SENDER='prenotazione@sarproject-01.appspotmail.com'
 EMAIL_VALIDATION_PATTERN='(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
 #
 ################### Domain ####################
 #
-DOMAIN_GOOGLE='https://www.thermostahouse.appspot.com'
+DOMAIN_GOOGLE='http://thermosthouse.appspot.com'
+COOKIE_DOMAIN='.thermosthouse.appspot.com'
 #
 ################ GoogleGeocode ################
 #
 GEOCODE_BASE_URL='https://maps.googleapis.com/maps/api/geocode/json'
 #
-################ GoogleCalendar ###############
-#
-USER_CALENDAR_ID='105092747182152692575'
-GENERAL_CALENDAR_ID='9b6oai64ur8phigu8pv4sd8sd4@group.calendar.google.com'
-#
+################################################

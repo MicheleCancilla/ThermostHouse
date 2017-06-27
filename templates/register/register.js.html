@@ -3,8 +3,7 @@
     $('#register-button').click(function () {
         var email = $('#user_email').val();
         var name = $('#name').val();
-        var password = $('#password').val();
-
+        var password = $('#pass').val();
         var register_button = $('#register-button-message');
         register_button.html('Registering...');
 
@@ -12,7 +11,7 @@
         register_button_icon.removeClass('fa-arrow-right').addClass('fa-cog fa-spin');
         $.ajax({
             type: "POST",
-            url: "/register", //TO-DO
+            url: "/register",
             data: {
                 email: email,
                 name: name,

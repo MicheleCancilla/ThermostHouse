@@ -1,26 +1,18 @@
-{% extends "index.html" %}
+{% extends "main.html" %}
 
-{% block title %}Errore{% endblock %}
+{% block title %}Errore Mail{% endblock %}
 
-{% block maincontent %}
+{% block content %}
 
- <!-- file per la comunicazione di errori in fase di invio di mail -->
+    <!-- File for email error -->
 
- <!-- Caricamento dei fogli di stile CSS -->
-  <link href="CSS/error.css" rel="stylesheet" type="text/css" />
-  <link href="CSS/set_pages.css" rel="stylesheet" type="text/css" />
+    <div class="container">
 
-<div id="main-content">
-<div id="setError">
+        <h1>Per problemi tecnici non siamo riusciti ad inviare la mail di richiesta </h1>
+        <h2>Ti preghiamo di riprovare più tardi </h2>
 
-    <h1>Per problemi tecnici non siamo riusciti ad inviare la mail di richiesta </h1>
-    <h2>Ti preghiamo di riprovare più tardi </h2>
+        <button class="btn btn-primary"  type="button" onclick="location.href='/home';"> Home</button>
 
-    <div id="setButton">
-        <button type="button" onclick="location.href='home';"> Home </button>
     </div>
-
-</div>
-</div><!-- main-content -->
 
 {% endblock %}

@@ -4,20 +4,16 @@
 
 {% block content %}
 
-    <!-- File per la comunicazione di errori generici -->
+    <!-- File fil generic errors -->
 
 
-    <div id="main-content">
-        <div id="setError">
+    <div class="container">
 
-            <h1>An error occured, we will try to fix it as soon as possible.</h1>
-            <h2>Provide us more information sending us an e-mail: {{ mail }}. </h2>
+        <h1>An error occurred, we will try to fix it as soon as possible.</h1>
+        <h2>Provide us more information sending us an e-mail: {{ mail }}. </h2>
 
-            <div id="setButton">
-                <button type="button" onclick="location.href='/';"> Home</button>
-            </div>
+        <button class="btn btn-primary" type="button" onclick="location.href='/home';"> Home</button>
 
-        </div>
     </div>
 
 {% endblock %}

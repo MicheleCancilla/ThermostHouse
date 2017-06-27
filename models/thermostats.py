@@ -2,52 +2,43 @@
 # -*- coding:utf-8 -*-
 from google.appengine.ext import ndb
 from models.address import Address
+from models.historicals import Historicals
 
 
 class Thermostats(ndb.Model):
-    # user = ndb.KeyProperty(kind='Users')  # key of the user, used to simulate one-to-many  relationship
     name = ndb.StringProperty(required=True)
-    house = ndb.StructuredProperty(Address, required=True)
+    plain_password = ndb.StringProperty(required=True)
+
+    sequence_number = ndb.IntegerProperty(default=0)
+    address = ndb.StructuredProperty(Address, required=True)
     temperature = ndb.FloatProperty(default=0.0)
     hysteresis = ndb.FloatProperty(default=0.0)
+    cold_delay = ndb.IntegerProperty(default=3)  # delay in minutes if our device use an air pump
+
+    # key of the user, used to simulate one-to-many relationship
+    owner = ndb.KeyProperty(kind='Users', repeated=False, required=True)
+    history = ndb.StructuredProperty(Historicals, repeated=True)
 
     @classmethod
-    def add_new_thermostat(cls, name, home, temperature, hysteresis, user_key=None):
-        user_id = ''
+    def add_new_thermostat(cls, name, plain_password, address, user_key):
 
-        if user_key:
-            user_id = str(user_key.id())
-
-        thermostat_key = cls(
-            user=user_key,
+        cls(
+            owner=user_key,
             name=name,
-            home=home,
-            temperature=float(temperature),
-            hysteresis=float(hysteresis),
+            address=address,
+            plain_password=plain_password
         ).put()
-
-        # index = search.Index('thermostats')
-        # doc = search.Document(
-        #     doc_id=str(thermostat_key.id()),
-        #     fields=[
-        #         search.TextField(name='user_id', value=user_id),
-        #         search.TextField(name='name', value=name),
-        #         search.NumberField(name='temperature', value=float(temperature)),
-        #         search.NumberField(name='hysteresis', value=float(hysteresis)),
-        #     ]
-        # )
-        #
-        # index.put(doc)
 
     @classmethod
     def get_thermostats(cls):
+        """Return all existing thermostats"""
         qry = cls.query()
         return qry
 
     @classmethod
-    def get_thermostats_by_keys(cls, keys):
-        """Return all thermostats finding them by keys"""
-        if not keys:
+    def get_thermostats_by_owner(cls, owner_key):
+        """Return all thermostats finding them by owner key"""
+        if not owner_key:
             return None
         else:
-            return ndb.gql("SELECT * FROM Thermostats where __key__ in :1", keys)
+            return ndb.gql("SELECT * FROM Thermostats where owner = :1", owner_key)

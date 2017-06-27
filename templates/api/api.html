@@ -1,10 +1,398 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "main.html" %}
+
+{% block title %}API{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-lg-10 col-lg-offset-1">
+            <div class="page-header">
+                <h1 class="text-primary">ThermostHouse API</h1>
+            </div>
+
+            <p class="text-justify">Le API pubbliche esportate da ThermostHouse sono completamente gratuite.
+                Per usufruirne è necessario creare un account ThermostHouse e se richiesto dall'API generare
+                una chiave dal proprio profilo utente.
+                Di seguito viene illustrato, a seconda dei casi, come costruire nel modo corretto una richiesta. Le
+                risposte sono in formato JSON ed il contenuto delle stesse dipende dal tipo di richiesta.
+                Per ogni API viene illustrata la richiesta da effettuare e la conseguente risposta corretta che si
+                ottiene di conseguenza.
+            </p>
+
+            <div class="page-header">
+                <h2>Comunicazione termostato</h2>
+            </div>
+
+            <p class="text-justify">Di seguito sarà trattata la API che permette il dialogo tra termostati e
+                il web server. Il formato standard di richiesta è il seguente:</p>
+            <p>La API accetterà quindi una richiesta del tipo:</p>
+            <p><code>POST https://thermosthouse.appspot.com/api/device</code></p>
+
+            <pre class="alert alert-info" role="alert">
+{
+    "DevId": 5676073085829120,
+    "SeqNumber": 1,
+    "RequestType": "std",
+    "Sign": "fdef0e09dae4a2df3c6a3a37f92e381aa68713a49649191d14fccc94aaec2835",
+    "Settings":
+    {
+        "TargetTemp": 10,
+        "Hyst": 10,
+        "ColdDelay": 10,
+    },
+    "CurState":
+    {
+        "Temp":  9.8,
+        "Mode": "Heat",
+    }
+}</pre>
+            <p>
+                <strong>Di seguito il significato di ogni singolo parametro</strong>
+            </p>
+            <table class="table table-responsive">
+                <tr>
+                    <th>Nome Parametro</th>
+                    <th>Tipo Parametro</th>
+                    <th>Descrizione Parametro</th>
+                </tr>
+                <tr>
+                    <td>DevId</td>
+                    <td>Integer</td>
+                    <td>Identificatore valido di un termostato</td>
+                </tr>
+                <tr>
+                    <td>SeqNumber</td>
+                    <td>Integer</td>
+                    <td>Sequence number (numero crescente) valido</td>
+                </tr>
+                <tr>
+                    <td>RequestType</td>
+                    <td>String</td>
+                    <td>Tipo di richiesta. Può valere "std" oppure "set". Nel primo caso il server tiene solamente
+                        traccia
+                        dei dati ricevuti dal termostato; nel secondo caso il server memorizza i nuovi parametri
+                        target, del campo <i>Settings</i>, da raggiungere nel datastore.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sign</td>
+                    <td>String</td>
+                    <td>Hash richiesto per l'autenticazione. sha256(SeqNumber + user_password + SeqNumber)</td>
+                </tr>
+                <tr>
+                    <td>Settings</td>
+                    <td>JSON</td>
+                    <td>Impostazioni da memorizzare se il campo <i>RequestType</i> è "set"</td>
+                </tr>
+                <tr>
+                    <td>TargetTemp</td>
+                    <td>Integer</td>
+                    <td>Temperatura target da memorizzare nel datastore</td>
+                </tr>
+                <tr>
+                    <td>Hyst</td>
+                    <td>Integer</td>
+                    <td>Isteresi da memorizzare nel datastore</td>
+                </tr>
+                <tr>
+                    <td>ColdDelay</td>
+                    <td>Integer</td>
+                    <td>Valore di ritardo da memorizzare nel datastore</td>
+                </tr>
+                <tr>
+                    <td>CurState</td>
+                    <td>JSON</td>
+                    <td>Informazioni sulla temperatura attuale del termostato</td>
+                </tr>
+                <tr>
+                    <td>Temp</td>
+                    <td>Integer</td>
+                    <td>Temperatura attuale del termostato</td>
+                </tr>
+                <tr>
+                    <td>Mode</td>
+                    <td>String</td>
+                    <td>Modalità in cui sta operando il termostato. Può essere:<br>
+                        "Heat": riscaldamento<br>
+                        "Cold": raffredamento<br>
+                        "None": <b>TODO??????????????????????????????????????????????????????????????</b>
+                </tr>
+            </table>
+
+            <p>La risposta, in formato JSON, avrà una struttura come quella mostrata nel seguito:</p>
+            <pre class="alert alert-success">
+{
+    "Response": "Ok",
+    "RemoteSet": "False",
+    "CurSettings":
+    {
+        "TargetTemp": 10,
+        "Hyst": 10,
+        "ColdDelay": 10,
+    },
+    "SeqNumber": 2,
+    "Sign": "fdef0e09dae4a2df3c6a3a37f92e381aa68713a49649191d14fccc94aaec2835"
+}</pre>
+
+            <p>
+                <strong>Nel dettaglio i campi di risposta sono:</strong>
+            </p>
+            <table class="table table-responsive">
+                <tr>
+                    <th>Nome Parametro</th>
+                    <th>Tipo Parametro</th>
+                    <th>Descrizione Parametro</th>
+                </tr>
+                <tr>
+                    <td>Response</td>
+                    <td>String</td>
+                    <td>"Ok" nel caso di risposta positiva, "Bad" altrimenti</td>
+                </tr>
+                <tr>
+                    <td>RemoteSet</td>
+                    <td>String</td>
+                    <td>"True" se precedentemente avevamo indicato di voler modificare i parametri target memorizzati
+                        sul server mediante il campo RequestType uguale a "set"; "False" altrimenti
+                    </td>
+                </tr>
+                <tr>
+                    <td>CurSettings</td>
+                    <td>JSON</td>
+                    <td>Impostazioni memorizzate attualmente dal server</td>
+                </tr>
+                <tr>
+                    <td>TargetTemp</td>
+                    <td>Integer</td>
+                    <td>Temperatura target memorizzata nel datastore</td>
+                </tr>
+                <tr>
+                    <td>Hyst</td>
+                    <td>Integer</td>
+                    <td>Isteresi memorizzata nel datastore</td>
+                </tr>
+                <tr>
+                    <td>ColdDelay</td>
+                    <td>Integer</td>
+                    <td>Valore di ritardo memorizzato nel datastore</td>
+                </tr>
+                <tr>
+                    <td>SeqNumber</td>
+                    <td>Integer</td>
+                    <td>Sequence number (numero crescente) corrente</td>
+                </tr>
+                <tr>
+                    <td>Sign</td>
+                    <td>String</td>
+                    <td>Hash utilizzato per l'autenticità del messaggio. sha256(SeqNumber + user_password + SeqNumber)
+                    </td>
+                </tr>
+            </table>
+
+            <p>Nel caso in cui i parametri di richiesta non siano corretti, vari tipi di risposta saranno ricevuti,
+                ovvero:</p>
+            <ul>
+                <li>
+                    <p>Modello di richiesta sbagliato</p>
+                    <pre class="alert alert-danger">
+{
+    "Response": "Bad",
+    "ErrMsg": "BadRequest",
+    "ErrId": 1
+}</pre>
+                </li>
+                <li>
+                    <p>Identificatore del termostato errato o non esistente</p>
+                    <pre class="alert alert-danger">
+{
+    "Response": "Bad",
+    "ErrMsg": "BadDevId",
+    "ErrId": 2
+}</pre>
+                </li>
+                <li>
+                    <p>Valore di sequence number minore di quello salvato dal server</p>
+                    <pre class="alert alert-danger">{
+    "Response": "Bad",
+    "ErrMsg": "BadSeqNumber",
+    "ErrId": 3,
+    "SeqNumber": 1,
+    "Sign": "fdef0e09dae4a2df3c6a3a37f92e381aa68713a49649191d14fccc94aaec2835"
+}</pre>
+                </li>
+                <li>
+                    <p>Campo Sign errato ma sequence number corretto</p>
+                    <pre class="alert alert-danger">
+{
+    "Response": "Bad",
+    "ErrMsg": "BadSign",
+    "ErrId": 4
+}</pre>
+                </li>
+            </ul>
+            <div class="page-header">
+                <h2>Richiesta temperature</h2>
+            </div>
+            {#            <form action="/api/get_temp" method="post">#}
+            {#                <label>Entro quali date vuoi conoscere le temperature rilevate?#}
+            {#                    <input class="datetime" type="text" name="daterange"/>#}
+            {#                </label>#}
+            {#                <input>#}
+            {#                <input type="reset" value="Resetta il form">#}
+            {#                <input type="submit" value="Invia">#}
+            {#            </form>#}
+            <p>Questa API permette di recuperare le temperature registrate da un termostato in un certo
+                lasso di tempo. Sarà quindi un requisito aver generato una chiave API valida
+                dal proprio profilo utente.<br>
+                Per sfruttare questa API basterà quindi specificare la chiave API personale, l'ID del termostato di cui
+                si
+                vuole ottenere informazioni e un intervallo di date entro cui filtrare.
+            </p>
+            <p>La API accetterà quindi una richiesta del tipo:</p>
+            <p><code>POST https://thermosthouse.appspot.com/api/get_temp</code></p>
+            <p>Dove i parametri sono nel dettaglio:</p>
+            <table class="table table-responsive">
+                <tr>
+                    <th>Nome Parametro</th>
+                    <th>Tipo Parametro</th>
+                    <th>Descrizione Parametro</th>
+                </tr>
+                <tr>
+                    <td>ApiKey</td>
+                    <td>String</td>
+                    <td>Chiave API generata dalla propria pagina del profilo ThermosHouse</td>
+                </tr>
+                <tr>
+                    <td>DevId</td>
+                    <td>Integer</td>
+                    <td>Identificatore del termostato di cui ottenere i dati</td>
+                </tr>
+                <tr>
+                    <td>BeginDate</td>
+                    <td>Date</td>
+                    <td>Data di inizio</td>
+                </tr>
+                <tr>
+                    <td>EndDate</td>
+                    <td>Date</td>
+                    <td>Data di fine</td>
+                </tr>
+            </table>
+
+            {#            <form action="/api/get_temp" method="post">#}
+            {#                <label>Entro quali date vuoi conoscere le temperature rilevate?#}
+            {#                    <input class="datetime" type="text" name="BeginDate" value="2017/01/12"/>#}
+            {#                    <input class="datetime" type="text" name="EndDate" value="2017/01/19"/>#}
+            {#                    <input class="datetime" type="text" name="ApiKey"#}
+            {#                           value="MKKGIt+eVIZ/zUBMsPcvGr0N/WPAV+s2Rc3vrTlGCgSHrTtBOTEnfw=="/>#}
+            {#                    <input class="datetime" type="text" name="DevId" value="5838406743490560"/>#}
+            {##}
+            {#                </label>#}
+            {#                <input type="reset" value="Resetta il form">#}
+            {#                <input type="submit" value="Invia">#}
+            {#            </form>#}
+            <p>Di contro si otterrà una risposta con la seguente struttura:</p>
+            <pre class="alert alert-success">
+{
+    "Response": "Ok",
+    "Temperatures":[
+        {
+            "Temp": 12.4,
+            "DateTime": "2017-01-18 17:03:00"
+        },
+        {
+            "Temp": 12.6,
+            "DateTime": "2017-01-18 17:04:00""
+        }]
+}</pre>
+
+            <p>Nel caso in cui i parametri di richiesta non siano corretti, vari tipi di risposta saranno ricevuti,
+                ovvero:</p>
+            <ul>
+                <li>
+                    <p>Modello di richiesta sbagliato</p>
+                    <pre class="alert alert-danger">
+{
+    "Response": "Bad",
+    "ErrMsg": "BadRequest",
+    "ErrId": 1
+}</pre>
+                </li>
+                <li>
+                    <p>Identificatore del termostato errato o non esistente</p>
+                    <pre class="alert alert-danger">
+{
+    "Response": "Bad",
+    "ErrMsg": "BadDevId",
+    "ErrId": 2
+}</pre>
+                </li>
+                <li>
+                    <p>Chiave API non generata dal proprio profilo utente</p>
+                    <pre class="alert alert-danger">{
+    "Response": "Bad",
+    "ErrMsg": "ApiKeyNotGenerated",
+    "ErrId": 3
+}</pre>
+                </li>
+                <li>
+                    <p>Chiave API non valida o non aggiornata</p>
+                    <pre class="alert alert-danger">
+{
+    "Response": "Bad",
+    "ErrMsg": "BadApiKey",
+    "ErrId": 4
+}</pre>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <!-- Include Required Prerequisites -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
+
+    <script type="text/javascript">
+        $('input[name="daterange"]').daterangepicker({
+            "locale": {
+                "format": "DD/MM/YYYY",
+                "separator": "-",
+                "applyLabel": "Applica",
+                "cancelLabel": "Cancella",
+                "fromLabel": "Da",
+                "toLabel": "A",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Lu",
+                    "Ma",
+                    "Me",
+                    "Gi",
+                    "Ve",
+                    "Sa",
+                    "Do"
+                ],
+                "monthNames": [
+                    "Gennaio",
+                    "Febbraio",
+                    "Marzo",
+                    "Aprile",
+                    "Maggio",
+                    "Giugno",
+                    "Luglio",
+                    "Agosto",
+                    "Settembre",
+                    "Ottobre",
+                    "Novembre",
+                    "Dicembre"
+                ],
+                "firstDay": 1
+            }
+        });
+    </script>
+
+{% endblock %}

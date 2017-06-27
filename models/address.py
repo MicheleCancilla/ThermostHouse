@@ -2,13 +2,14 @@
 
 
 """
-    Modello INDIRIZZO per il datastore: INDIRIZZO è una structuredProperty di UTENTE. In questo file viene anche
-    definita la funzione di geolocalizzazione che effettua la chiamata all'API Geocode di Google
+    Address model: address is an user's structuredProperty. Geolocation (Google API) is also defined here
 """
 
-from google.appengine.ext import ndb
-import urllib
 import json
+import urllib
+
+from google.appengine.ext import ndb
+
 from conf.configuration_reader import conf
 
 
@@ -17,15 +18,24 @@ class Address(ndb.Model):
     number = ndb.IntegerProperty(required=True)
     city = ndb.StringProperty(required=True)
     province = ndb.StringProperty(required=True,
-                                  choices=['AG', 'AL', 'AN', 'AO', 'AQ', 'AR', 'AP', 'AT', 'AV', 'BA', 'BT', 'BL',
-                                           'BN', 'BG', 'BI', 'BO', 'BZ', 'BS', 'BR', 'CA', 'CL', 'CB', 'CE', 'CT',
-                                           'CZ', 'CH', 'CO', 'CS', 'CR', 'KR', 'CN', 'EN', 'FM', 'FE', 'FI', 'FG',
-                                           'FC', 'FR', 'GE', 'GO', 'GR', 'IM', 'IS', 'SP', 'LT', 'LE', 'LC', 'LI',
-                                           'LO', 'LU', 'MC', 'MN', 'MS', 'MT', 'ME', 'MI', 'MO', 'MB', 'NA', 'NO',
-                                           'NU', 'OR', 'PD', 'PA', 'PR', 'PV', 'PG', 'PU', 'PE', 'PC', 'PI', 'PT',
-                                           'PN', 'PZ', 'PO', 'RG', 'RA', 'RC', 'RE', 'RI', 'RN', 'RM', 'RO', 'SA',
-                                           'SS', 'SV', 'SI', 'SR', 'SO', 'TA', 'TE', 'TR', 'TO', 'TP', 'TN', 'TV',
-                                           'TS', 'UD', 'VA', 'VE', 'VB', 'VC', 'VR', 'VV', 'VI', 'VT'])
+                                  choices=['Agrigento', 'Alessandria', 'Ancona', 'Aosta', 'Aquila', 'Arezzo',
+                                           'Ascoli Piceno', 'Asti', 'Avellino', 'Bari', 'Barletta', 'Belluno',
+                                           'Benevento', 'Bergamo', 'Biella', 'Bologna', 'Bolzano', 'Brescia', 'Bindisi',
+                                           'Cagliari', 'Caltanissetta', 'Campobasso', 'Caserta', 'Catania',
+                                           'Catanzaro', 'Chieti', 'Como', 'Cosenza', 'Cremona', 'Crotone', 'Cuneo',
+                                           'Enna', 'Fermo', 'Ferrara', 'Firenze', 'Foggia',
+                                           'Forlì-Cesena', 'Frosinone', 'Genova', 'Gorizia', 'Grosseto', 'Imperia',
+                                           'Isernia', 'La Spezia', 'Latina', 'Lecce', 'Lecco', 'Livorno',
+                                           'Lodi', 'Lucca', 'Macerata', 'Mantova', 'Massa-Carrara', 'Matera', 'Messina',
+                                           'Milano', 'Modena', 'Monza e Brienza', 'Napoli', 'Novara',
+                                           'Nuoro', 'Oristano', 'Padova', 'Palermo', 'Parma', 'Pavia', 'Perugia',
+                                           'Pesaro e Urbino', 'Pescara', 'Piacenza', 'Pisa', 'Pistoia',
+                                           'Pordenone', 'Potenza', 'Prato', 'Ragusa', 'Ravenna', 'Reggio Calabria',
+                                           'Reggio Emilia', 'Rieti', 'Rimini', 'Roma', 'Rovigo', 'Salerno',
+                                           'Sassari', 'Savona', 'Siena', 'Siracusa', 'Sondrio', 'Taranto', 'Teramo',
+                                           'Trani', 'Torino', 'Trapani', 'Trento', 'Treviso',
+                                           'Trieste', 'Udine', 'Varese', 'Venezia', 'Verbano', 'Vercelli', 'Verona',
+                                           'Vibo Valentia', 'Vicenza', 'Viterbo'])
     region = ndb.StringProperty(required=True,
                                 choices=['Abruzzo', 'Basilicata', 'Calabria', 'Campania', 'Emilia-Romagna',
                                          'Friuli-Venezia Giulia', 'Lazio', 'Liguria', 'Lombardia', 'Marche', 'Molise',
@@ -37,15 +47,14 @@ class Address(ndb.Model):
 
     def geocode(self, **geo_args):
         """
-            Metodo per il calcolo delle coordinare geografiche di un indirizzo. Il metodo fa uso dell'API di
-            geolocalizzazione di Google: GEOCODE.
-
+            Function useful for retrieve the geo coord of an address.
         """
 
-        # Costruisco l'indirizzo in base alle informazioni ricevute
-        address = self.street + " " + str(self.number) + ", " + str(self.zip_code) + " " + str(self.city) + " " + str(
-            self.province) + ", " + str(self.region) + ", " + str(self.nation)
-
+        # Build the address
+        # address = self.street + " " + str(self.number) + ", " + str(self.zip_code) + " " + str(self.city) + " " + str(
+        #     self.province) + ", " + str(self.region) + ", " + str(self.nation)
+        address = str(self.province) + ", " + str(self.region) + ", " + str(self.nation)
+        print address
         geo_args.update({
             'address': address
         })
@@ -61,22 +70,22 @@ class Address(ndb.Model):
             pass
 
         if status is None:
-            # Non è stato possibile effettuare la richiesta a Google
+            # Request failed
             return 1
         elif status == 'ZERO_RESULTS':
-            # Non è stata trovata alcuna corrispondenza
+            # No match found
             return 1
         elif status == 'OVER_QUERY_LIMIT':
-            # Superato il limite giornaliero di richieste
+            # Number of requests exceeded
             return 1
         elif status == 'REQUEST_DENIED':
             # Indicates that your request was denied, generally because of lack of an invalid key parameter
             return 1
         elif status == 'INVALID_REQUEST':
-            # Errore, non sono riuscito a localizzare l'utente
+            # Error, localization failed
             return 1
         elif status == 'OK':
-            # Estrazione delle informazioi di latitudine e longitudine dall'oggetto RESULTS, se vengono individuati più punti sulla mappa si considera solo il primo
+            # extraction of lat and lng information
             lat = result["results"][0]["geometry"]["location"]["lat"]
             lng = result["results"][0]["geometry"]["location"]["lng"]
 

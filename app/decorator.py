@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+"""
+File for oauth2 authentication with decorator. Used for google login and sheets export in drive.
+"""
+
 import os
 
 import httplib2
@@ -29,9 +33,15 @@ href="https://code.google.com/apis/console">APIs Console</a>.
 http = httplib2.Http(memcache)
 
 service = build("plus", "v1", http=http)
+sheets_service = build('sheets', 'v4', http=http)
 
 decorator = OAuth2DecoratorFromClientSecrets(
     CLIENT_SECRETS,
     scope=['https://www.googleapis.com/auth/plus.login',
            'https://www.googleapis.com/auth/userinfo.email'],
+    message=MISSING_CLIENT_SECRETS_MESSAGE)
+
+sheets_decorator = OAuth2DecoratorFromClientSecrets(
+    CLIENT_SECRETS,
+    scope='https://www.googleapis.com/auth/spreadsheets',
     message=MISSING_CLIENT_SECRETS_MESSAGE)

@@ -6,50 +6,27 @@
 
     <div class="main-header">
         <div class="container">
-            <div class="row"
-            ">
+            <div class="row">
                 <h1 class="home-h1">ThermostHouse</h1>
-            <div class="col-lg-12">
-                <div id="map">
-                    <!-- Script per la creazione della mappa di Google: -->
-                    <script type="text/javascript">
-                        // Setto i parametri
-                        var data = {{ js_data|safe }};
-                        var map_key = data["mapKey"];
-                        var map_latlng = data["latlng"];
-                        var map_url = "https://maps.googleapis.com/maps/api/js?key=" + map_key + "&callback=initMap";
-                        {#var weatherKey = data["weatherKey"];#}
-                    </script>
+                <p class="home-h3">Chi ci ha scelto! &#8595;</p>
 
+                <div id="map">
                     <!-- Generazione della mappa -->
-                    <script type="text/javascript" src="js/google_map_controller.js"></script>
+                    <script>
+                        var data = {{ js_data|safe }};
+                    </script>
 
                     <!-- Caricamento della mappa sulla pagina Web -->
-                    <script type="text/javascript">
-                        var JSElement = document.createElement('script');
-                        JSElement.src = map_url;
-                        JSElement.onload = OnceLoaded;
-                        JSElement.async;
-                        JSElement.defer;
-                        document.getElementsByTagName('head')[0].appendChild(JSElement);
+                    <script type="text/javascript" src="/js/google_map_controller.js"></script>
 
-                        function OnceLoaded() {
-                            // Once loaded.. load other JS or CSS or call objects of version.js
-                        }
-                    </script>
-
-                    {#<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDODEyUIjbQ6PgMG0ODRMNKQPJ4AKBR1gw&callback=initMap"
-                                    async defer>
-                            </script>#}
 
                     <div id="mapError">
                         <!-- Messaggio di errore che viene visualizzato quando l'indirizzo "https://maps.googleapis.com/maps/api/js
                     key=AIzaSyDpQRSHed-kPo86I3VR-bBPsrTdRnnxD9w&callback=initMap" della mappa di Google non è raggiungibile -->
                         <h1 align="center">Impossibile caricare la mappa,<br/> controlla la connessione e
                             riprova più tardi.</h1>
-                        </div>
+                    </div>
 
-                </div>
                 </div>
             </div>
         </div>
